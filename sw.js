@@ -1,15 +1,15 @@
-const CACHE_NAME = 'gym-tracker-v1';
+const CACHE_NAME = 'gym-tracker-v2';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/js/app.js',
-    '/js/workouts.js',
-    '/js/firebase.js',
-    '/js/timer.js',
-    '/js/charts.js',
-    '/js/calendar.js',
-    '/manifest.json'
+    './',
+    './index.html',
+    './css/style.css',
+    './js/app.js',
+    './js/workouts.js',
+    './js/firebase.js',
+    './js/timer.js',
+    './js/charts.js',
+    './js/calendar.js',
+    './manifest.json'
 ];
 
 // Install event - cache files
@@ -68,7 +68,7 @@ self.addEventListener('fetch', event => {
             .catch(() => {
                 // Offline fallback for navigation requests
                 if (event.request.mode === 'navigate') {
-                    return caches.match('/index.html');
+                    return caches.match('./index.html');
                 }
             })
     );
