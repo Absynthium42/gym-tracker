@@ -11,37 +11,37 @@
     --accent: #f59e0b;
     --success: #10b981;
     --danger: #ef4444;
-    
+
     /* Backgrounds */
     --bg-dark: #0f0f1a;
     --bg-card: #1a1a2e;
     --bg-card-hover: #252542;
     --bg-input: #16162a;
-    
+
     /* Text */
     --text-primary: #ffffff;
     --text-secondary: #a1a1aa;
     --text-muted: #71717a;
-    
+
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     --gradient-push: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
     --gradient-legs: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
     --gradient-pull: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    
+
     /* Spacing */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
-    
+
     /* Border radius */
     --radius-sm: 0.5rem;
     --radius-md: 1rem;
     --radius-lg: 1.5rem;
     --radius-full: 9999px;
-    
+
     /* Shadows */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
@@ -140,8 +140,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .page-header {
@@ -210,17 +217,27 @@ body {
     transition: opacity 0.3s ease;
 }
 
-.workout-card[data-workout="push"]::before { background: var(--gradient-push); }
-.workout-card[data-workout="legs"]::before { background: var(--gradient-legs); }
-.workout-card[data-workout="pull"]::before { background: var(--gradient-pull); }
+.workout-card[data-workout="push"]::before {
+    background: var(--gradient-push);
+}
 
-.workout-card:hover, .workout-card:active {
+.workout-card[data-workout="legs"]::before {
+    background: var(--gradient-legs);
+}
+
+.workout-card[data-workout="pull"]::before {
+    background: var(--gradient-pull);
+}
+
+.workout-card:hover,
+.workout-card:active {
     background: var(--bg-card-hover);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
-.workout-card:hover::before, .workout-card:active::before {
+.workout-card:hover::before,
+.workout-card:active::before {
     opacity: 1;
 }
 
@@ -428,7 +445,8 @@ body {
     transition: background 0.2s;
 }
 
-.weight-adjust:hover, .weight-adjust:active {
+.weight-adjust:hover,
+.weight-adjust:active {
     background: var(--primary);
 }
 
@@ -462,12 +480,8 @@ body {
 }
 
 .workout-actions {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 2 * var(--spacing-lg));
-    max-width: calc(480px - 2 * var(--spacing-lg));
+    margin-top: var(--spacing-xl);
+    padding: 0 var(--spacing-lg);
 }
 
 /* ==========================================
@@ -491,7 +505,8 @@ body {
     box-shadow: var(--shadow-glow);
 }
 
-.btn-primary:hover, .btn-primary:active {
+.btn-primary:hover,
+.btn-primary:active {
     transform: translateY(-2px);
     box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
 }
@@ -639,8 +654,15 @@ body {
 }
 
 @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
 }
 
 .complete-display h2 {
@@ -910,9 +932,17 @@ body {
     border-radius: 50%;
 }
 
-.calendar-day.workout-push::after { background: var(--accent); }
-.calendar-day.workout-legs::after { background: var(--success); }
-.calendar-day.workout-pull::after { background: var(--primary); }
+.calendar-day.workout-push::after {
+    background: var(--accent);
+}
+
+.calendar-day.workout-legs::after {
+    background: var(--success);
+}
+
+.calendar-day.workout-pull::after {
+    background: var(--primary);
+}
 
 .calendar-legend {
     display: flex;
@@ -937,9 +967,17 @@ body {
     border-radius: 50%;
 }
 
-.legend-dot.push { background: var(--accent); }
-.legend-dot.legs { background: var(--success); }
-.legend-dot.pull { background: var(--primary); }
+.legend-dot.push {
+    background: var(--accent);
+}
+
+.legend-dot.legs {
+    background: var(--success);
+}
+
+.legend-dot.pull {
+    background: var(--primary);
+}
 
 /* ==========================================
    Body Tracking Page
@@ -1007,9 +1045,17 @@ body {
     margin-top: var(--spacing-xs);
 }
 
-.imc-category.normal { color: var(--success); }
-.imc-category.overweight { color: var(--accent); }
-.imc-category.underweight { color: var(--primary-light); }
+.imc-category.normal {
+    color: var(--success);
+}
+
+.imc-category.overweight {
+    color: var(--accent);
+}
+
+.imc-category.underweight {
+    color: var(--primary-light);
+}
 
 .body-chart-section h2 {
     font-size: 1.1rem;
@@ -1105,10 +1151,11 @@ body {
 }
 
 @keyframes slideUp {
-    from { 
+    from {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1138,11 +1185,11 @@ body {
     html {
         font-size: 14px;
     }
-    
+
     .workout-card {
         padding: var(--spacing-md);
     }
-    
+
     .card-icon {
         font-size: 2.5rem;
     }
