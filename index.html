@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="Application de suivi de musculation">
+    <title>Gym Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-page="home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Accueil</span>
+            </button>
+            <button class="nav-btn" data-page="progress">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Stats</span>
+            </button>
+            <button class="nav-btn" data-page="calendar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Calendrier</span>
+            </button>
+            <button class="nav-btn" data-page="body">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Corps</span>
+            </button>
+            <button class="nav-btn" data-page="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+                <span>Config</span>
+            </button>
+        </nav>
+
+        <!-- Pages -->
+        <!-- Home Page -->
+        <main id="page-home" class="page active">
+            <header class="page-header">
+                <h1>🏋️ Gym Tracker</h1>
+                <p class="sync-status" id="sync-status">Synchronisation...</p>
+            </header>
+            <section class="workout-selection">
+                <h2>Choisis ta séance</h2>
+                <div class="workout-cards">
+                    <button class="workout-card" data-workout="push">
+                        <div class="card-icon">💪</div>
+                        <h3>Push</h3>
+                        <p>Épaules & Pectoraux</p>
+                        <span class="exercises-count">5 exercices</span>
+                    </button>
+                    <button class="workout-card" data-workout="legs">
+                        <div class="card-icon">🦵</div>
+                        <h3>Legs</h3>
+                        <p>Jambes</p>
+                        <span class="exercises-count">5 exercices</span>
+                    </button>
+                    <button class="workout-card" data-workout="pull">
+                        <div class="card-icon">🔙</div>
+                        <h3>Pull</h3>
+                        <p>Dos & Biceps</p>
+                        <span class="exercises-count">5 exercices</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Workout Session Page -->
+        <main id="page-workout" class="page">
+            <header class="workout-header">
+                <button class="back-btn" id="back-to-home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <div class="workout-progress">
+                    <span id="current-exercise-num">1</span>/<span id="total-exercises">5</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </header>
+
+            <section class="exercise-display">
+                <h2 id="exercise-name">Overhead Press</h2>
+                <div class="series-badge">
+                    Série <span id="current-series">1</span>/<span id="total-series">3</span>
+                </div>
+
+                <div class="exercise-gif-container">
+                    <img id="exercise-gif" src="" alt="Animation exercice" class="exercise-gif">
+                </div>
+
+                <div class="reps-display">
+                    <span class="reps-label">Répétitions</span>
+                    <span class="reps-value" id="target-reps">4-6</span>
+                </div>
+
+                <div class="weight-section">
+                    <div class="pr-display" id="pr-display">
+                        <span class="pr-icon">🏆</span>
+                        <span class="pr-label">Record:</span>
+                        <span class="pr-value" id="pr-value">--</span>
+                        <span class="pr-unit">kg</span>
+                    </div>
+
+                    <div class="weight-input-group">
+                        <label for="weight-input">Poids soulevé</label>
+                        <div class="weight-input-wrapper">
+                            <button class="weight-adjust" id="weight-minus">−</button>
+                            <input type="number" id="weight-input" value="0" min="0" step="0.5">
+                            <button class="weight-adjust" id="weight-plus">+</button>
+                            <span class="weight-unit">kg</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="workout-actions">
+                <button class="btn-primary" id="next-btn">
+                    <span>Suivant</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </main>
+
+        <!-- Rest Timer Page -->
+        <main id="page-rest" class="page">
+            <section class="timer-display">
+                <h2>Repos</h2>
+                <div class="timer-circle">
+                    <svg class="timer-svg" viewBox="0 0 100 100">
+                        <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="timer-progress" cx="50" cy="50" r="45" id="timer-circle"></circle>
+                    </svg>
+                    <div class="timer-text" id="timer-text">2:00</div>
+                </div>
+                <p class="next-exercise-preview">
+                    Prochain: <span id="next-preview">Série 2</span>
+                </p>
+                <button class="btn-secondary" id="skip-rest">Passer</button>
+            </section>
+        </main>
+
+        <!-- Workout Complete Page -->
+        <main id="page-complete" class="page">
+            <section class="complete-display">
+                <div class="complete-icon">🎉</div>
+                <h2>Séance terminée !</h2>
+                <div class="session-summary" id="session-summary">
+                    <!-- Summary will be inserted here -->
+                </div>
+                <div class="new-prs" id="new-prs">
+                    <!-- New PRs will be shown here -->
+                </div>
+                <button class="btn-primary" id="finish-workout">Terminer</button>
+            </section>
+        </main>
+
+        <!-- Progress Page -->
+        <main id="page-progress" class="page">
+            <header class="page-header">
+                <h1>📈 Progression</h1>
+            </header>
+            <section class="progress-section">
+                <div class="filter-group">
+                    <label for="exercise-select">Exercice</label>
+                    <select id="exercise-select" class="select-input">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="progress-chart"></canvas>
+                </div>
+                <div class="stats-cards" id="stats-cards">
+                    <!-- Stats cards will be populated -->
+                </div>
+            </section>
+
+            <section class="objectives-section">
+                <h2>🎯 Objectifs</h2>
+                <div class="objectives-list" id="objectives-list">
+                    <!-- Objectives will be populated -->
+                </div>
+                <button class="btn-secondary" id="add-objective-btn">+ Ajouter un objectif</button>
+            </section>
+        </main>
+
+        <!-- Calendar Page -->
+        <main id="page-calendar" class="page">
+            <header class="page-header">
+                <h1>📅 Calendrier</h1>
+            </header>
+            <section class="calendar-section">
+                <div class="calendar-nav">
+                    <button class="cal-nav-btn" id="prev-month">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <h3 id="calendar-month">Décembre 2025</h3>
+                    <button class="cal-nav-btn" id="next-month">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <div class="day-header">Lun</div>
+                    <div class="day-header">Mar</div>
+                    <div class="day-header">Mer</div>
+                    <div class="day-header">Jeu</div>
+                    <div class="day-header">Ven</div>
+                    <div class="day-header">Sam</div>
+                    <div class="day-header">Dim</div>
+                    <!-- Calendar days will be populated -->
+                </div>
+                <div class="calendar-legend">
+                    <span class="legend-item"><span class="legend-dot push"></span>Push</span>
+                    <span class="legend-item"><span class="legend-dot legs"></span>Legs</span>
+                    <span class="legend-item"><span class="legend-dot pull"></span>Pull</span>
+                </div>
+            </section>
+        </main>
+
+        <!-- Body Tracking Page -->
+        <main id="page-body" class="page">
+            <header class="page-header">
+                <h1>⚖️ Suivi Corporel</h1>
+            </header>
+            <section class="body-input-section">
+                <div class="input-group">
+                    <label for="body-weight">Poids (kg)</label>
+                    <input type="number" id="body-weight" placeholder="75" step="0.1" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="body-height">Taille (cm)</label>
+                    <input type="number" id="body-height" placeholder="175" min="0">
+                </div>
+                <button class="btn-primary" id="save-body-data">Enregistrer</button>
+
+                <div class="imc-display" id="imc-display">
+                    <h3>IMC</h3>
+                    <div class="imc-value" id="imc-value">--</div>
+                    <div class="imc-category" id="imc-category">--</div>
+                </div>
+            </section>
+
+            <section class="body-chart-section">
+                <h2>Évolution du poids</h2>
+                <div class="chart-container">
+                    <canvas id="body-chart"></canvas>
+                </div>
+            </section>
+
+            <section class="body-chart-section">
+                <h2>Évolution de l'IMC</h2>
+                <div class="chart-container">
+                    <canvas id="imc-chart"></canvas>
+                </div>
+            </section>
+        </main>
+
+        <!-- Settings Page -->
+        <main id="page-settings" class="page">
+            <header class="page-header">
+                <h1>⚙️ Paramètres</h1>
+            </header>
+            <section class="settings-section">
+                <div class="setting-item">
+                    <h3>🔗 Synchronisation Firebase</h3>
+                    <p class="setting-desc">Connecte-toi pour synchroniser tes données</p>
+                    <div class="firebase-config" id="firebase-config">
+                        <input type="text" id="firebase-url" placeholder="URL Firebase Realtime Database">
+                        <button class="btn-secondary" id="connect-firebase">Connecter</button>
+                    </div>
+                    <div class="sync-info" id="sync-info"></div>
+                </div>
+
+                <div class="setting-item">
+                    <h3>💾 Export / Import</h3>
+                    <p class="setting-desc">Sauvegarde ou restaure tes données</p>
+                    <div class="export-buttons">
+                        <button class="btn-secondary" id="export-json">Export JSON</button>
+                        <button class="btn-secondary" id="export-csv">Export CSV</button>
+                        <label class="btn-secondary import-btn">
+                            Import JSON
+                            <input type="file" id="import-json" accept=".json" hidden>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <h3>🗑️ Données</h3>
+                    <button class="btn-danger" id="clear-data">Effacer toutes les données</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Objective Modal -->
+        <div class="modal" id="objective-modal">
+            <div class="modal-content">
+                <h3>Nouvel objectif</h3>
+                <div class="input-group">
+                    <label for="obj-exercise">Exercice</label>
+                    <select id="obj-exercise" class="select-input"></select>
+                </div>
+                <div class="input-group">
+                    <label for="obj-weight">Poids cible (kg)</label>
+                    <input type="number" id="obj-weight" min="0" step="0.5">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" id="cancel-objective">Annuler</button>
+                    <button class="btn-primary" id="save-objective">Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/workouts.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>
