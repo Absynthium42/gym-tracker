@@ -17,45 +17,29 @@ class GymTrackerApp {
     }
 
     async init() {
-        // Try to connect to Firebase
-        await firebaseSync.autoConnect();
-
-        // Setup navigation
+        // Initialize app first
         this.setupNavigation();
-
-        // Setup workout cards
         this.setupWorkoutCards();
-
-        // Setup workout session controls
         this.setupWorkoutControls();
-
-        // Setup timer controls
         this.setupTimerControls();
-
-        // Setup progress page
         this.setupProgressPage();
-
-        // Setup body tracking page
         this.setupBodyPage();
-
-        // Setup settings page
         this.setupSettingsPage();
-
-        // Setup objective modal
         this.setupObjectiveModal();
 
-        // Initialize calendar
         calendarManager.init();
 
-        // Initialize charts
         chartsManager.initProgressChart('progress-chart');
         chartsManager.initBodyChart('body-chart');
         chartsManager.initImcChart('imc-chart');
 
-        // Listen for data sync events
         window.addEventListener('dataSync', () => {
             this.refreshCurrentPage();
         });
+
+        // Try to connect to Firebase in background
+        console.log('App initialized, starting background sync...');
+        firebaseSync.autoConnect().catch(e => console.error('Background sync failed:', e));
 
         console.log('Gym Tracker initialized!');
     }
