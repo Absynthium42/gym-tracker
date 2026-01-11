@@ -1,10 +1,12 @@
-const CACHE_NAME = 'gym-tracker-v6';
+const CACHE_NAME = 'gym-tracker-v8';
 const urlsToCache = [
     './',
     './index.html',
     './css/style.css',
     './js/app.js',
     './js/workouts.js',
+    './js/firebase.js',
+    './js/charts.js',
     './js/timer.js',
     './js/calendar.js',
     './js/vendor/chart.js',

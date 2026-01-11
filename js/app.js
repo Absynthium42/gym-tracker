@@ -265,7 +265,7 @@ class GymTrackerApp {
         const weightInput = document.getElementById('weight-input').value.replace(',', '.');
         const weight = parseFloat(weightInput) || 0;
         if (weight > 0) {
-            // Check for new PR
+            // Check for new PR (based on current local data, will be saved on completion)
             const currentPR = firebaseSync.getPersonalRecord(exercise.id, this.currentSeriesIndex);
             if (currentPR === null || weight > currentPR) {
                 this.sessionData.newPRs.push({
@@ -276,8 +276,7 @@ class GymTrackerApp {
                 });
             }
 
-            await firebaseSync.saveWeight(exercise.id, this.currentSeriesIndex, weight);
-
+            // Store in session data - will be saved only on workout completion
             this.sessionData.exercises.push({
                 exerciseId: exercise.id,
                 exerciseName: exercise.name,
@@ -346,6 +345,15 @@ class GymTrackerApp {
         const duration = Math.round((new Date() - this.sessionData.startTime) / 1000 / 60);
 
         try {
+            // Save all accumulated weights from the completed session
+            for (const exerciseData of this.sessionData.exercises) {
+                await firebaseSync.saveWeight(
+                    exerciseData.exerciseId,
+                    exerciseData.series - 1, // series is 1-indexed, convert to 0-indexed
+                    exerciseData.weight
+                );
+            }
+
             // Save workout to history
             await firebaseSync.saveWorkoutSession({
                 workoutType: this.sessionData.workoutType,
