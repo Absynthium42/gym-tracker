@@ -1,15 +1,18 @@
-const CACHE_NAME = 'gym-tracker-v4';
+const CACHE_NAME = 'gym-tracker-v5';
 const urlsToCache = [
     './',
     './index.html',
     './css/style.css',
     './js/app.js',
     './js/workouts.js',
-    './js/firebase.js',
     './js/timer.js',
-    './js/charts.js',
     './js/calendar.js',
-    './manifest.json'
+    './js/vendor/chart.js',
+    './js/vendor/firebase-app.js',
+    './js/vendor/firebase-database.js',
+    './manifest.json',
+    './icons/icon-192x192.png',
+    './icons/icon-512x512.png'
 ];
 
 // Install event - cache files
