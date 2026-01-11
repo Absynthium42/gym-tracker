@@ -141,6 +141,7 @@ class FirebaseSync {
             workoutHistory: [],    // [{ date, workoutType, duration, exercises: [...] }]
             bodyData: [],          // [{ date, weight, height }]
             objectives: [],        // [{ exerciseId, targetWeight, createdAt }]
+            customNames: {},       // { exerciseId: "Custom Name" }
             lastModified: null
         };
     }
@@ -219,62 +220,86 @@ class FirebaseSync {
     getWorkoutsForMonth(year, month) {
         const history = this.getWorkoutHistory();
         return history.filter(w => {
-            const date = new Date(w.date);
-            return date.getFullYear() === year && date.getMonth() === month;
-        });
-    }
+            getWorkoutsForMonth(year, month) {
+                const history = this.getWorkoutHistory();
+                return history.filter(w => {
+                    if (!w.date) return false;
+                    const date = new Date(w.date);
+                    return date.getFullYear() === year && date.getMonth() === month;
+                });
+            }
+        }
 
     // Body data
     async saveBodyData(weight, height) {
-        const data = this.getData();
-        data.bodyData.push({
-            date: new Date().toISOString(),
-            weight: weight,
-            height: height
-        });
-        await this.saveData(data);
-    }
+            const data = this.getData();
+            data.bodyData.push({
+                date: new Date().toISOString(),
+                weight: weight,
+                height: height
+            });
+            await this.saveData(data);
+        }
 
     getBodyData() {
-        return this.getData().bodyData || [];
-    }
+            return this.getData().bodyData || [];
+        }
 
     getLatestBodyData() {
-        const bodyData = this.getBodyData();
-        return bodyData.length > 0 ? bodyData[bodyData.length - 1] : null;
-    }
+            const bodyData = this.getBodyData();
+            return bodyData.length > 0 ? bodyData[bodyData.length - 1] : null;
+        }
 
     // Objectives
     async saveObjective(exerciseId, targetWeight) {
-        const data = this.getData();
-        data.objectives.push({
-            id: Date.now().toString(),
-            exerciseId: exerciseId,
-            targetWeight: targetWeight,
-            createdAt: new Date().toISOString(),
-            achieved: false
-        });
-        await this.saveData(data);
-    }
+            const data = this.getData();
+            data.objectives.push({
+                id: Date.now().toString(),
+                exerciseId: exerciseId,
+                targetWeight: targetWeight,
+                createdAt: new Date().toISOString(),
+                achieved: false
+            });
+            await this.saveData(data);
+        }
 
     async deleteObjective(objectiveId) {
-        const data = this.getData();
-        data.objectives = data.objectives.filter(o => o.id !== objectiveId);
-        await this.saveData(data);
-    }
+            const data = this.getData();
+            data.objectives = data.objectives.filter(o => o.id !== objectiveId);
+            await this.saveData(data);
+        }
 
     async markObjectiveAchieved(objectiveId) {
-        const data = this.getData();
-        const objective = data.objectives.find(o => o.id === objectiveId);
-        if (objective) {
-            objective.achieved = true;
-            objective.achievedAt = new Date().toISOString();
+            const data = this.getData();
+            const objective = data.objectives.find(o => o.id === objectiveId);
+            if(objective) {
+                objective.achieved = true;
+                objective.achievedAt = new Date().toISOString();
+            }
+        await this.saveData(data);
         }
+
+    getObjectives() {
+            return this.getData().objectives || [];
+        }
+
+    // Custom Names
+    async saveCustomExerciseName(exerciseId, newName) {
+            const data = this.getData();
+            if(!data.customNames) data.customNames = {};
+
+        if (newName && newName.trim()) {
+            data.customNames[exerciseId] = newName.trim();
+        } else {
+            delete data.customNames[exerciseId];
+        }
+
         await this.saveData(data);
     }
 
-    getObjectives() {
-        return this.getData().objectives || [];
+    getCustomExerciseName(exerciseId) {
+        const data = this.getData();
+        return (data.customNames && data.customNames[exerciseId]) || null;
     }
 
     // Export / Import

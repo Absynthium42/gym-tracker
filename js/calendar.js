@@ -82,6 +82,10 @@ class CalendarManager {
         for (let day = 1; day <= daysInMonth; day++) {
             const isToday = isCurrentMonth && day === today.getDate();
             const workoutType = workoutDays[day];
+
+            // Debug check
+            if (workoutType) console.log(`Day ${day} has workout: ${workoutType}`);
+
             const dayEl = this.createDayElement(day, false, isToday, workoutType);
             grid.appendChild(dayEl);
         }

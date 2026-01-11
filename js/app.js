@@ -200,7 +200,24 @@ class GymTrackerApp {
         document.getElementById('progress-fill').style.width = `${progress}%`;
 
         // Update exercise info
-        document.getElementById('exercise-name').textContent = exercise.name;
+        const customName = firebaseSync.getCustomExerciseName(exercise.id);
+        const displayName = customName || exercise.name;
+
+        const nameContainer = document.getElementById('exercise-name');
+        nameContainer.innerHTML = `
+            ${displayName} 
+            <button id="rename-exercise-btn" style="background:none;border:none;cursor:pointer;font-size:1rem;margin-left:0.5rem;opacity:0.7;">✏️</button>
+        `;
+
+        document.getElementById('rename-exercise-btn').onclick = async (e) => {
+            e.stopPropagation();
+            const newName = prompt('Nouveau nom pour cet exercice :', displayName);
+            if (newName !== null) {
+                await firebaseSync.saveCustomExerciseName(exercise.id, newName);
+                this.showExercise(); // Refresh view
+            }
+        };
+
         document.getElementById('current-series').textContent = this.currentSeriesIndex + 1;
         document.getElementById('total-series').textContent = exercise.series.length;
         document.getElementById('target-reps').textContent = series.reps;
@@ -208,7 +225,7 @@ class GymTrackerApp {
         // Update GIF (placeholder for now)
         const gifEl = document.getElementById('exercise-gif');
         gifEl.src = `assets/gifs/${exercise.gif}`;
-        gifEl.alt = exercise.name;
+        gifEl.alt = displayName;
         gifEl.onerror = () => {
             gifEl.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%231a1a2e" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%236366f1" font-size="40">🏋️</text></svg>';
         };
@@ -218,7 +235,7 @@ class GymTrackerApp {
         const prValue = document.getElementById('pr-value');
         prValue.textContent = pr !== null ? pr : '--';
 
-        // Default weight to 0
+        // Default weight to 0 (or previous)
         document.getElementById('weight-input').value = 0;
     }
 
@@ -261,7 +278,8 @@ class GymTrackerApp {
         const series = exercise.series[this.currentSeriesIndex];
 
         // Save weight
-        const weight = parseFloat(document.getElementById('weight-input').value) || 0;
+        const weightInput = document.getElementById('weight-input').value.replace(',', '.');
+        const weight = parseFloat(weightInput) || 0;
         if (weight > 0) {
             // Check for new PR
             const currentPR = firebaseSync.getPersonalRecord(exercise.id, this.currentSeriesIndex);
@@ -343,59 +361,70 @@ class GymTrackerApp {
     async completeWorkout() {
         const duration = Math.round((new Date() - this.sessionData.startTime) / 1000 / 60);
 
-        // Save workout to history
-        await firebaseSync.saveWorkoutSession({
-            workoutType: this.sessionData.workoutType,
-            duration: duration,
-            exerciseCount: new Set(this.sessionData.exercises.map(e => e.exerciseId)).size,
-            totalSets: this.sessionData.exercises.length,
-            totalVolume: this.sessionData.exercises.reduce((sum, e) => sum + e.weight, 0)
-        });
+        try {
+            // Save workout to history
+            await firebaseSync.saveWorkoutSession({
+                workoutType: this.sessionData.workoutType,
+                duration: duration,
+                exerciseCount: new Set(this.sessionData.exercises.map(e => e.exerciseId)).size,
+                totalSets: this.sessionData.exercises.length,
+                totalVolume: this.sessionData.exercises.reduce((sum, e) => sum + e.weight, 0)
+            });
 
-        // Check and update objectives
-        await this.checkObjectives();
+            // Check and update objectives (non-blocking)
+            try {
+                await this.checkObjectives();
+            } catch (err) {
+                console.error('Error checking objectives:', err);
+            }
 
-        // Show summary
-        const summary = document.getElementById('session-summary');
-        summary.innerHTML = `
-            <div class="summary-item">
-                <span class="summary-label">Durée</span>
-                <span class="summary-value">${duration} min</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Exercices</span>
-                <span class="summary-value">${new Set(this.sessionData.exercises.map(e => e.exerciseId)).size}</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Séries</span>
-                <span class="summary-value">${this.sessionData.exercises.length}</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Volume total</span>
-                <span class="summary-value">${this.sessionData.exercises.reduce((sum, e) => sum + e.weight, 0)} kg</span>
-            </div>
-        `;
+            // Show summary
+            const summary = document.getElementById('session-summary');
+            summary.innerHTML = `
+                <div class="summary-item">
+                    <span class="summary-label">Durée</span>
+                    <span class="summary-value">${duration} min</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Exercices</span>
+                    <span class="summary-value">${new Set(this.sessionData.exercises.map(e => e.exerciseId)).size}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Séries</span>
+                    <span class="summary-value">${this.sessionData.exercises.length}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Volume total</span>
+                    <span class="summary-value">${this.sessionData.exercises.reduce((sum, e) => sum + e.weight, 0)} kg</span>
+                </div>
+            `;
 
-        // Show new PRs
-        const prsEl = document.getElementById('new-prs');
-        if (this.sessionData.newPRs.length > 0) {
-            prsEl.innerHTML = '<h3 style="margin-bottom: 0.5rem;">🏆 Nouveaux records !</h3>' +
-                this.sessionData.newPRs.map(pr => `
-                    <div class="new-pr-item">
-                        <span class="pr-icon">🏆</span>
-                        <span>${pr.exercise} (S${pr.series}): ${pr.weight}kg</span>
-                    </div>
-                `).join('');
-        } else {
-            prsEl.innerHTML = '';
+            // Show new PRs
+            const prsEl = document.getElementById('new-prs');
+            if (this.sessionData.newPRs.length > 0) {
+                prsEl.innerHTML = '<h3 style="margin-bottom: 0.5rem;">🏆 Nouveaux records !</h3>' +
+                    this.sessionData.newPRs.map(pr => `
+                        <div class="new-pr-item">
+                            <span class="pr-icon">🏆</span>
+                            <span>${pr.exercise} (S${pr.series}): ${pr.weight}kg</span>
+                        </div>
+                    `).join('');
+            } else {
+                prsEl.innerHTML = '';
+            }
+
+            // Finish button
+            document.getElementById('finish-workout').onclick = () => {
+                this.navigateTo('home');
+            };
+
+            this.navigateTo('complete');
+        } catch (error) {
+            console.error('Error completing workout:', error);
+            alert('Erreur lors de la sauvegarde de la séance. Vos données sont peut-être sauvegardées localement.');
+            // Try to navigate anyway if it was just a sync error
+            this.navigateTo('complete');
         }
-
-        // Finish button
-        document.getElementById('finish-workout').onclick = () => {
-            this.navigateTo('home');
-        };
-
-        this.navigateTo('complete');
     }
 
     // ==========================================
@@ -419,9 +448,11 @@ class GymTrackerApp {
         if (!select) return;
 
         const exercises = getAllExercises();
-        const optionsHtml = exercises.map(ex =>
-            `<option value="${ex.id}">${ex.name} (${ex.workout})</option>`
-        ).join('');
+        const optionsHtml = exercises.map(ex => {
+            const customName = firebaseSync.getCustomExerciseName(ex.id);
+            const displayName = customName || ex.name;
+            return `<option value="${ex.id}">${displayName} (${ex.workout})</option>`;
+        }).join('');
 
         select.innerHTML = optionsHtml;
         if (objSelect) objSelect.innerHTML = optionsHtml;
@@ -540,8 +571,11 @@ class GymTrackerApp {
     // ==========================================
     setupBodyPage() {
         document.getElementById('save-body-data')?.addEventListener('click', async () => {
-            const weight = parseFloat(document.getElementById('body-weight').value);
-            const height = parseFloat(document.getElementById('body-height').value);
+            const weightInput = document.getElementById('body-weight').value.replace(',', '.');
+            const heightInput = document.getElementById('body-height').value.replace(',', '.');
+
+            const weight = parseFloat(weightInput);
+            const height = parseFloat(heightInput);
 
             if (weight > 0) {
                 // Get stored height if not provided
@@ -550,6 +584,9 @@ class GymTrackerApp {
 
                 await firebaseSync.saveBodyData(weight, finalHeight);
                 this.updateBodyPage();
+                alert('Données enregistrées !');
+            } else {
+                alert('Veuillez entrer un poids valide.');
             }
         });
     }
