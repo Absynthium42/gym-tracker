@@ -142,6 +142,7 @@ class FirebaseSync {
             bodyData: [],          // [{ date, weight, height }]
             objectives: [],        // [{ exerciseId, targetWeight, createdAt }]
             customNames: {},       // { exerciseId: "Custom Name" }
+            difficultyRatings: {}, // { exerciseId_seriesIndex: "easy"|"medium"|"hard" }
             lastModified: null
         };
     }
@@ -296,6 +297,22 @@ class FirebaseSync {
     getCustomExerciseName(exerciseId) {
         const data = this.getData();
         return (data.customNames && data.customNames[exerciseId]) || null;
+    }
+
+    // Difficulty Ratings
+    async saveDifficultyRating(exerciseId, seriesIndex, rating) {
+        const data = this.getData();
+        if (!data.difficultyRatings) data.difficultyRatings = {};
+        const key = `${exerciseId}_${seriesIndex}`;
+        data.difficultyRatings[key] = rating;
+        await this.saveData(data);
+    }
+
+    getDifficultyRating(exerciseId, seriesIndex) {
+        const data = this.getData();
+        if (!data.difficultyRatings) return null;
+        const key = `${exerciseId}_${seriesIndex}`;
+        return data.difficultyRatings[key] || null;
     }
 
     // Export / Import

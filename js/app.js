@@ -8,11 +8,13 @@ class GymTrackerApp {
         this.currentWorkout = null;
         this.currentExerciseIndex = 0;
         this.currentSeriesIndex = 0;
+        this.currentDifficulty = null; // Track current series difficulty selection
         this.sessionData = {
             workoutType: null,
             startTime: null,
             exercises: [],
-            newPRs: []
+            newPRs: [],
+            difficultyRatings: [] // { exerciseId, seriesIndex, rating }
         };
     }
 
@@ -221,6 +223,30 @@ class GymTrackerApp {
 
         // Default weight to 0 (or previous)
         document.getElementById('weight-input').value = 0;
+
+        // Reset and setup difficulty rating
+        this.currentDifficulty = null;
+        const diffButtons = document.querySelectorAll('.difficulty-btn');
+        diffButtons.forEach(btn => btn.classList.remove('selected'));
+
+        // Show previous difficulty rating
+        const previousDifficulty = firebaseSync.getDifficultyRating(exercise.id, this.currentSeriesIndex);
+        const diffPreviousEl = document.getElementById('difficulty-previous');
+        if (previousDifficulty) {
+            const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
+            diffPreviousEl.textContent = `Précédent: ${labels[previousDifficulty]}`;
+        } else {
+            diffPreviousEl.textContent = '';
+        }
+
+        // Setup difficulty button handlers
+        diffButtons.forEach(btn => {
+            btn.onclick = () => {
+                diffButtons.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                this.currentDifficulty = btn.dataset.difficulty;
+            };
+        });
     }
 
     showCancelConfirmation() {
@@ -283,6 +309,15 @@ class GymTrackerApp {
                 series: this.currentSeriesIndex + 1,
                 weight: weight,
                 reps: series.reps
+            });
+        }
+
+        // Save difficulty rating if selected
+        if (this.currentDifficulty) {
+            this.sessionData.difficultyRatings.push({
+                exerciseId: exercise.id,
+                seriesIndex: this.currentSeriesIndex,
+                rating: this.currentDifficulty
             });
         }
 
@@ -351,6 +386,15 @@ class GymTrackerApp {
                     exerciseData.exerciseId,
                     exerciseData.series - 1, // series is 1-indexed, convert to 0-indexed
                     exerciseData.weight
+                );
+            }
+
+            // Save all difficulty ratings from the completed session
+            for (const diffData of this.sessionData.difficultyRatings) {
+                await firebaseSync.saveDifficultyRating(
+                    diffData.exerciseId,
+                    diffData.seriesIndex,
+                    diffData.rating
                 );
             }
 
