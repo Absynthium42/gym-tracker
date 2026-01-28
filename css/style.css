@@ -554,6 +554,159 @@ body {
     transform: scale(0.95);
 }
 
+/* Combo Exercise Section */
+.combo-section {
+    margin-top: var(--spacing-lg);
+    padding: 0 var(--spacing-lg);
+}
+
+.combo-exercise {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+}
+
+.combo-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-light);
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+}
+
+.combo-inputs {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: flex-start;
+}
+
+.combo-weight {
+    flex: 1;
+    text-align: center;
+}
+
+.combo-weight label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.combo-weight-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.combo-weight-wrapper input {
+    width: 70px;
+    height: 36px;
+    background: var(--bg-input);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.combo-weight-wrapper input::-webkit-outer-spin-button,
+.combo-weight-wrapper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.combo-weight-wrapper input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.combo-weight-wrapper span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.combo-pr {
+    font-size: 0.7rem;
+    color: var(--accent);
+    margin-top: 4px;
+}
+
+.combo-difficulty {
+    flex: 1;
+    text-align: center;
+}
+
+.combo-difficulty label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.combo-diff-prev {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    display: block;
+    margin-bottom: 4px;
+    min-height: 14px;
+}
+
+.combo-diff-btns {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+.combo-diff-btn {
+    width: 32px;
+    height: 32px;
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.combo-diff-btn.easy {
+    border-color: #10b981;
+}
+
+.combo-diff-btn.medium {
+    border-color: #f59e0b;
+}
+
+.combo-diff-btn.hard {
+    border-color: #ef4444;
+}
+
+.combo-diff-btn.easy.selected {
+    background: #10b981;
+    color: white;
+}
+
+.combo-diff-btn.medium.selected {
+    background: #f59e0b;
+    color: white;
+}
+
+.combo-diff-btn.hard.selected {
+    background: #ef4444;
+    color: white;
+}
+
+.combo-diff-btn:active {
+    transform: scale(0.9);
+}
+
 .workout-actions {
     margin-top: var(--spacing-xl);
     padding: 0 var(--spacing-lg);

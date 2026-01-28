@@ -148,7 +148,7 @@
                 </div>
             </section>
 
-            <section class="difficulty-section">
+            <section class="difficulty-section" id="difficulty-section-single">
                 <div class="difficulty-header">
                     <span class="difficulty-label">Difficulté ressentie</span>
                     <span class="difficulty-previous" id="difficulty-previous"></span>
@@ -157,6 +157,54 @@
                     <button class="difficulty-btn easy" data-difficulty="easy">Facile</button>
                     <button class="difficulty-btn medium" data-difficulty="medium">Moyen</button>
                     <button class="difficulty-btn hard" data-difficulty="hard">Difficile</button>
+                </div>
+            </section>
+
+            <!-- Combo Exercise Section (hidden by default) -->
+            <section class="combo-section" id="combo-section" style="display: none;">
+                <div class="combo-exercise" id="combo-exercise-1">
+                    <h4 class="combo-title" id="combo-title-1">Exercice 1</h4>
+                    <div class="combo-inputs">
+                        <div class="combo-weight">
+                            <label>Poids</label>
+                            <div class="combo-weight-wrapper">
+                                <input type="number" id="combo-weight-1" value="0" min="0" step="0.5">
+                                <span>kg</span>
+                            </div>
+                            <div class="combo-pr" id="combo-pr-1">🏆 --</div>
+                        </div>
+                        <div class="combo-difficulty">
+                            <label>Difficulté</label>
+                            <span class="combo-diff-prev" id="combo-diff-prev-1"></span>
+                            <div class="combo-diff-btns">
+                                <button class="combo-diff-btn easy" data-combo="1" data-difficulty="easy">F</button>
+                                <button class="combo-diff-btn medium" data-combo="1" data-difficulty="medium">M</button>
+                                <button class="combo-diff-btn hard" data-combo="1" data-difficulty="hard">D</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="combo-exercise" id="combo-exercise-2">
+                    <h4 class="combo-title" id="combo-title-2">Exercice 2</h4>
+                    <div class="combo-inputs">
+                        <div class="combo-weight">
+                            <label>Poids</label>
+                            <div class="combo-weight-wrapper">
+                                <input type="number" id="combo-weight-2" value="0" min="0" step="0.5">
+                                <span>kg</span>
+                            </div>
+                            <div class="combo-pr" id="combo-pr-2">🏆 --</div>
+                        </div>
+                        <div class="combo-difficulty">
+                            <label>Difficulté</label>
+                            <span class="combo-diff-prev" id="combo-diff-prev-2"></span>
+                            <div class="combo-diff-btns">
+                                <button class="combo-diff-btn easy" data-combo="2" data-difficulty="easy">F</button>
+                                <button class="combo-diff-btn medium" data-combo="2" data-difficulty="medium">M</button>
+                                <button class="combo-diff-btn hard" data-combo="2" data-difficulty="hard">D</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 

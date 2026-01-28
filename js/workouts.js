@@ -96,6 +96,11 @@ const WORKOUTS = {
                 id: 'leg_curl_extension',
                 name: 'Leg Curl + Leg Extension',
                 gif: 'leg_curl.gif',
+                isCombo: true,
+                subExercises: [
+                    { id: 'leg_curl', name: 'Leg Curl' },
+                    { id: 'leg_extension', name: 'Leg Extension' }
+                ],
                 series: [
                     { reps: '8-12', rest: 30 },
                     { reps: '8-12', rest: 30 },
@@ -197,12 +202,24 @@ function getAllExercises() {
     for (const workoutKey of Object.keys(WORKOUTS)) {
         const workout = WORKOUTS[workoutKey];
         for (const exercise of workout.exercises) {
-            exercises.push({
-                id: exercise.id,
-                name: exercise.name,
-                workout: workout.name,
-                seriesCount: exercise.series.length
-            });
+            // For combo exercises, add each sub-exercise individually
+            if (exercise.isCombo && exercise.subExercises) {
+                for (const subEx of exercise.subExercises) {
+                    exercises.push({
+                        id: subEx.id,
+                        name: subEx.name,
+                        workout: workout.name,
+                        seriesCount: exercise.series.length
+                    });
+                }
+            } else {
+                exercises.push({
+                    id: exercise.id,
+                    name: exercise.name,
+                    workout: workout.name,
+                    seriesCount: exercise.series.length
+                });
+            }
         }
     }
     return exercises;

@@ -9,6 +9,7 @@ class GymTrackerApp {
         this.currentExerciseIndex = 0;
         this.currentSeriesIndex = 0;
         this.currentDifficulty = null; // Track current series difficulty selection
+        this.comboDifficulties = [null, null]; // For combo exercises
         this.sessionData = {
             workoutType: null,
             startTime: null,
@@ -131,6 +132,7 @@ class GymTrackerApp {
         this.currentExerciseIndex = 0;
         this.currentSeriesIndex = 0;
         this.currentDifficulty = null;
+        this.comboDifficulties = [null, null];
 
         this.sessionData = {
             workoutType: workoutType,
@@ -226,29 +228,78 @@ class GymTrackerApp {
         // Default weight to 0 (or previous)
         document.getElementById('weight-input').value = 0;
 
-        // Reset and setup difficulty rating
-        this.currentDifficulty = null;
-        const diffButtons = document.querySelectorAll('.difficulty-btn');
-        diffButtons.forEach(btn => btn.classList.remove('selected'));
+        // Check if this is a combo exercise
+        const isCombo = exercise.isCombo && exercise.subExercises;
+        const comboSection = document.getElementById('combo-section');
+        const singleWeightSection = document.querySelector('.weight-section');
+        const singleDiffSection = document.getElementById('difficulty-section-single');
 
-        // Show previous difficulty rating
-        const previousDifficulty = firebaseSync.getDifficultyRating(exercise.id, this.currentSeriesIndex);
-        const diffPreviousEl = document.getElementById('difficulty-previous');
-        if (previousDifficulty) {
-            const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
-            diffPreviousEl.textContent = `Précédent: ${labels[previousDifficulty]}`;
+        if (isCombo) {
+            // Show combo section, hide single inputs
+            comboSection.style.display = 'block';
+            singleWeightSection.style.display = 'none';
+            singleDiffSection.style.display = 'none';
+
+            // Reset combo difficulty selections
+            this.comboDifficulties = [null, null];
+            document.querySelectorAll('.combo-diff-btn').forEach(btn => btn.classList.remove('selected'));
+
+            // Setup combo sub-exercises
+            exercise.subExercises.forEach((subEx, idx) => {
+                const num = idx + 1;
+                document.getElementById(`combo-title-${num}`).textContent = subEx.name;
+                document.getElementById(`combo-weight-${num}`).value = 0;
+
+                // Show PR for sub-exercise
+                const subPr = firebaseSync.getPersonalRecord(subEx.id, this.currentSeriesIndex);
+                document.getElementById(`combo-pr-${num}`).textContent = `🏆 ${subPr !== null ? subPr : '--'}`;
+
+                // Show previous difficulty
+                const prevDiff = firebaseSync.getDifficultyRating(subEx.id, this.currentSeriesIndex);
+                const labels = { easy: 'F', medium: 'M', hard: 'D' };
+                document.getElementById(`combo-diff-prev-${num}`).textContent = prevDiff ? `Préc: ${labels[prevDiff]}` : '';
+            });
+
+            // Setup combo difficulty button handlers
+            document.querySelectorAll('.combo-diff-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const comboNum = parseInt(btn.dataset.combo);
+                    // Remove selected from same group
+                    document.querySelectorAll(`.combo-diff-btn[data-combo="${comboNum}"]`).forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    this.comboDifficulties[comboNum - 1] = btn.dataset.difficulty;
+                };
+            });
         } else {
-            diffPreviousEl.textContent = '';
-        }
+            // Show single inputs, hide combo section
+            comboSection.style.display = 'none';
+            singleWeightSection.style.display = 'block';
+            singleDiffSection.style.display = 'block';
 
-        // Setup difficulty button handlers
-        diffButtons.forEach(btn => {
-            btn.onclick = () => {
-                diffButtons.forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                this.currentDifficulty = btn.dataset.difficulty;
-            };
-        });
+            // Reset and setup difficulty rating
+            this.currentDifficulty = null;
+            const diffButtons = document.querySelectorAll('.difficulty-btn');
+            diffButtons.forEach(btn => btn.classList.remove('selected'));
+
+            // Show previous difficulty rating
+            const previousDifficulty = firebaseSync.getDifficultyRating(exercise.id, this.currentSeriesIndex);
+            const diffPreviousEl = document.getElementById('difficulty-previous');
+            if (previousDifficulty) {
+                const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
+                diffPreviousEl.textContent = `Précédent: ${labels[previousDifficulty]}`;
+            } else {
+                diffPreviousEl.textContent = '';
+            }
+
+            // Setup difficulty button handlers
+            diffButtons.forEach(btn => {
+                btn.onclick = () => {
+                    diffButtons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    this.currentDifficulty = btn.dataset.difficulty;
+                };
+            });
+        }
     }
 
     showCancelConfirmation() {
@@ -289,38 +340,81 @@ class GymTrackerApp {
         const exercise = workout.exercises[this.currentExerciseIndex];
         const series = exercise.series[this.currentSeriesIndex];
 
-        // Save weight
-        const weightInput = document.getElementById('weight-input').value.replace(',', '.');
-        const weight = parseFloat(weightInput) || 0;
-        if (weight > 0) {
-            // Check for new PR (based on current local data, will be saved on completion)
-            const currentPR = firebaseSync.getPersonalRecord(exercise.id, this.currentSeriesIndex);
-            if (currentPR === null || weight > currentPR) {
-                this.sessionData.newPRs.push({
-                    exercise: exercise.name,
+        // Check if this is a combo exercise
+        const isCombo = exercise.isCombo && exercise.subExercises;
+
+        if (isCombo) {
+            // Save weights and difficulties for each sub-exercise
+            exercise.subExercises.forEach((subEx, idx) => {
+                const num = idx + 1;
+                const weightInput = document.getElementById(`combo-weight-${num}`).value.replace(',', '.');
+                const weight = parseFloat(weightInput) || 0;
+
+                if (weight > 0) {
+                    // Check for new PR
+                    const currentPR = firebaseSync.getPersonalRecord(subEx.id, this.currentSeriesIndex);
+                    if (currentPR === null || weight > currentPR) {
+                        this.sessionData.newPRs.push({
+                            exercise: subEx.name,
+                            series: this.currentSeriesIndex + 1,
+                            weight: weight,
+                            previousPR: currentPR
+                        });
+                    }
+
+                    // Store in session data
+                    this.sessionData.exercises.push({
+                        exerciseId: subEx.id,
+                        exerciseName: subEx.name,
+                        series: this.currentSeriesIndex + 1,
+                        weight: weight,
+                        reps: series.reps
+                    });
+                }
+
+                // Save difficulty for sub-exercise
+                if (this.comboDifficulties[idx]) {
+                    this.sessionData.difficultyRatings.push({
+                        exerciseId: subEx.id,
+                        seriesIndex: this.currentSeriesIndex,
+                        rating: this.comboDifficulties[idx]
+                    });
+                }
+            });
+        } else {
+            // Standard single exercise handling
+            const weightInput = document.getElementById('weight-input').value.replace(',', '.');
+            const weight = parseFloat(weightInput) || 0;
+            if (weight > 0) {
+                // Check for new PR (based on current local data, will be saved on completion)
+                const currentPR = firebaseSync.getPersonalRecord(exercise.id, this.currentSeriesIndex);
+                if (currentPR === null || weight > currentPR) {
+                    this.sessionData.newPRs.push({
+                        exercise: exercise.name,
+                        series: this.currentSeriesIndex + 1,
+                        weight: weight,
+                        previousPR: currentPR
+                    });
+                }
+
+                // Store in session data - will be saved only on workout completion
+                this.sessionData.exercises.push({
+                    exerciseId: exercise.id,
+                    exerciseName: exercise.name,
                     series: this.currentSeriesIndex + 1,
                     weight: weight,
-                    previousPR: currentPR
+                    reps: series.reps
                 });
             }
 
-            // Store in session data - will be saved only on workout completion
-            this.sessionData.exercises.push({
-                exerciseId: exercise.id,
-                exerciseName: exercise.name,
-                series: this.currentSeriesIndex + 1,
-                weight: weight,
-                reps: series.reps
-            });
-        }
-
-        // Save difficulty rating if selected
-        if (this.currentDifficulty) {
-            this.sessionData.difficultyRatings.push({
-                exerciseId: exercise.id,
-                seriesIndex: this.currentSeriesIndex,
-                rating: this.currentDifficulty
-            });
+            // Save difficulty rating if selected
+            if (this.currentDifficulty) {
+                this.sessionData.difficultyRatings.push({
+                    exerciseId: exercise.id,
+                    seriesIndex: this.currentSeriesIndex,
+                    rating: this.currentDifficulty
+                });
+            }
         }
 
         // Determine next step
