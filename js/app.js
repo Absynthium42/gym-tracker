@@ -130,12 +130,14 @@ class GymTrackerApp {
         this.currentWorkout = WORKOUTS[workoutType];
         this.currentExerciseIndex = 0;
         this.currentSeriesIndex = 0;
+        this.currentDifficulty = null;
 
         this.sessionData = {
             workoutType: workoutType,
             startTime: new Date(),
             exercises: [],
-            newPRs: []
+            newPRs: [],
+            difficultyRatings: []
         };
 
         this.showExercise();
