@@ -228,12 +228,15 @@ class FirebaseSync {
     }
 
     // Body data
-    async saveBodyData(weight, height) {
+    async saveBodyData(weight, height, waist = null, hip = null, chest = null) {
         const data = this.getData();
         data.bodyData.push({
             date: new Date().toISOString(),
             weight: weight,
-            height: height
+            height: height,
+            waist: waist,
+            hip: hip,
+            chest: chest
         });
         await this.saveData(data);
     }

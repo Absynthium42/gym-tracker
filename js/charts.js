@@ -7,6 +7,8 @@ class ChartsManager {
         this.progressChart = null;
         this.bodyChart = null;
         this.imcChart = null;
+        this.rthChart = null;
+        this.rtpChart = null;
     }
 
     initProgressChart(canvasId) {
@@ -335,8 +337,183 @@ class ChartsManager {
         this.imcChart.data.datasets[0].data = data;
         this.imcChart.update();
     }
+
+    // RTH Chart (Waist-to-Hip Ratio)
+    initRthChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        if (this.rthChart) {
+            this.rthChart.destroy();
+        }
+
+        this.rthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'RTH',
+                    data: [],
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#f97316',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1a1a2e',
+                        titleColor: '#ffffff',
+                        bodyColor: '#a1a1aa',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#71717a', maxRotation: 45 }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#71717a' },
+                        suggestedMin: 0.7,
+                        suggestedMax: 1.1
+                    }
+                }
+            }
+        });
+    }
+
+    updateRthChart() {
+        if (!this.rthChart) return;
+
+        const bodyData = firebaseSync.getBodyData();
+        // Only entries with both waist and hip (same day)
+        const validData = bodyData.filter(entry => entry.waist && entry.hip);
+
+        if (validData.length === 0) {
+            this.rthChart.data.labels = [];
+            this.rthChart.data.datasets[0].data = [];
+            this.rthChart.update();
+            return;
+        }
+
+        const labels = validData.map(entry =>
+            new Date(entry.date).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit'
+            })
+        );
+
+        const data = validData.map(entry =>
+            Math.round((entry.waist / entry.hip) * 100) / 100
+        );
+
+        this.rthChart.data.labels = labels;
+        this.rthChart.data.datasets[0].data = data;
+        this.rthChart.update();
+    }
+
+    // RTP Chart (Chest-to-Waist Ratio)
+    initRtpChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        if (this.rtpChart) {
+            this.rtpChart.destroy();
+        }
+
+        this.rtpChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'RTP',
+                    data: [],
+                    borderColor: '#a855f7',
+                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#a855f7',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1a1a2e',
+                        titleColor: '#ffffff',
+                        bodyColor: '#a1a1aa',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#71717a', maxRotation: 45 }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#71717a' },
+                        suggestedMin: 0.8,
+                        suggestedMax: 1.6
+                    }
+                }
+            }
+        });
+    }
+
+    updateRtpChart() {
+        if (!this.rtpChart) return;
+
+        const bodyData = firebaseSync.getBodyData();
+        // Only entries with both waist and chest (same day)
+        const validData = bodyData.filter(entry => entry.waist && entry.chest);
+
+        if (validData.length === 0) {
+            this.rtpChart.data.labels = [];
+            this.rtpChart.data.datasets[0].data = [];
+            this.rtpChart.update();
+            return;
+        }
+
+        const labels = validData.map(entry =>
+            new Date(entry.date).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit'
+            })
+        );
+
+        const data = validData.map(entry =>
+            Math.round((entry.chest / entry.waist) * 100) / 100
+        );
+
+        this.rtpChart.data.labels = labels;
+        this.rtpChart.data.datasets[0].data = data;
+        this.rtpChart.update();
+    }
 }
 
 // Global instance
 const chartsManager = new ChartsManager();
-

@@ -35,6 +35,8 @@ class GymTrackerApp {
         chartsManager.initProgressChart('progress-chart');
         chartsManager.initBodyChart('body-chart');
         chartsManager.initImcChart('imc-chart');
+        chartsManager.initRthChart('rth-chart');
+        chartsManager.initRtpChart('rtp-chart');
 
         window.addEventListener('dataSync', () => {
             this.refreshCurrentPage();
@@ -705,28 +707,41 @@ class GymTrackerApp {
         document.getElementById('save-body-data')?.addEventListener('click', async () => {
             const weightInput = document.getElementById('body-weight').value.replace(',', '.');
             const heightInput = document.getElementById('body-height').value.replace(',', '.');
+            const waistInput = document.getElementById('body-waist').value.replace(',', '.');
+            const hipInput = document.getElementById('body-hip').value.replace(',', '.');
+            const chestInput = document.getElementById('body-chest').value.replace(',', '.');
 
-            const weight = parseFloat(weightInput);
-            const height = parseFloat(heightInput);
+            const weight = parseFloat(weightInput) || 0;
+            const height = parseFloat(heightInput) || 0;
+            const waist = parseFloat(waistInput) || 0;
+            const hip = parseFloat(hipInput) || 0;
+            const chest = parseFloat(chestInput) || 0;
 
-            if (weight > 0) {
-                // Get stored height if not provided
+            // At least weight or one measurement required
+            if (weight > 0 || waist > 0 || hip > 0 || chest > 0) {
+                // Get stored values as fallbacks
                 const latestData = firebaseSync.getLatestBodyData();
+                const finalWeight = weight > 0 ? weight : (latestData?.weight || 0);
                 const finalHeight = height > 0 ? height : (latestData?.height || 0);
+                const finalWaist = waist > 0 ? waist : null;
+                const finalHip = hip > 0 ? hip : null;
+                const finalChest = chest > 0 ? chest : null;
 
-                await firebaseSync.saveBodyData(weight, finalHeight);
+                await firebaseSync.saveBodyData(finalWeight, finalHeight, finalWaist, finalHip, finalChest);
                 this.updateBodyPage();
                 alert('Données enregistrées !');
             } else {
-                alert('Veuillez entrer un poids valide.');
+                alert('Veuillez entrer au moins une mesure.');
             }
         });
     }
 
     updateBodyPage() {
         const latestData = firebaseSync.getLatestBodyData();
+        const bodyData = firebaseSync.getBodyData();
 
         if (latestData) {
+            // Pre-fill height from latest data
             document.getElementById('body-height').value = latestData.height || '';
 
             // Calculate and display IMC
@@ -738,29 +753,77 @@ class GymTrackerApp {
                 document.getElementById('imc-value').textContent = imcRounded;
 
                 let category = '';
-                let categoryClass = '';
                 if (imc < 18.5) {
-                    category = 'Insuffisance pondérale';
-                    categoryClass = 'underweight';
+                    category = 'Insuffisance';
                 } else if (imc < 25) {
-                    category = 'Corpulence normale';
-                    categoryClass = 'normal';
+                    category = 'Normal';
                 } else if (imc < 30) {
                     category = 'Surpoids';
-                    categoryClass = 'overweight';
                 } else {
                     category = 'Obésité';
-                    categoryClass = 'overweight';
                 }
 
                 const categoryEl = document.getElementById('imc-category');
                 categoryEl.textContent = category;
-                categoryEl.className = 'imc-category ' + categoryClass;
+                categoryEl.className = 'ratio-category';
             }
         }
 
+        // Find latest entry with waist AND hip for RTH
+        const latestRthData = [...bodyData].reverse().find(d => d.waist && d.hip);
+        if (latestRthData) {
+            const rth = latestRthData.waist / latestRthData.hip;
+            const rthRounded = Math.round(rth * 100) / 100;
+
+            document.getElementById('rth-value').textContent = rthRounded;
+
+            let rthCategory = '';
+            if (rth < 0.85) {
+                rthCategory = 'Guêpe/BB';
+            } else if (rth < 0.90) {
+                rthCategory = 'Idéal';
+            } else if (rth < 0.95) {
+                rthCategory = 'Droit';
+            } else if (rth < 1.0) {
+                rthCategory = 'Bloc';
+            } else {
+                rthCategory = 'Rond ⚠️';
+            }
+            document.getElementById('rth-category').textContent = rthCategory;
+        } else {
+            document.getElementById('rth-value').textContent = '--';
+            document.getElementById('rth-category').textContent = '--';
+        }
+
+        // Find latest entry with waist AND chest for RTP
+        const latestRtpData = [...bodyData].reverse().find(d => d.waist && d.chest);
+        if (latestRtpData) {
+            const rtp = latestRtpData.chest / latestRtpData.waist;
+            const rtpRounded = Math.round(rtp * 100) / 100;
+
+            document.getElementById('rtp-value').textContent = rtpRounded;
+
+            let rtpCategory = '';
+            if (rtp > 1.4) {
+                rtpCategory = 'V Marqué';
+            } else if (rtp >= 1.1) {
+                rtpCategory = 'Athlétique';
+            } else if (rtp >= 1.0) {
+                rtpCategory = 'Droit';
+            } else {
+                rtpCategory = 'Poire';
+            }
+            document.getElementById('rtp-category').textContent = rtpCategory;
+        } else {
+            document.getElementById('rtp-value').textContent = '--';
+            document.getElementById('rtp-category').textContent = '--';
+        }
+
+        // Update all charts
         chartsManager.updateBodyChart();
         chartsManager.updateImcChart();
+        chartsManager.updateRthChart();
+        chartsManager.updateRtpChart();
     }
 
     // ==========================================

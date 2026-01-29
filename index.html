@@ -323,20 +323,58 @@
                 <h1>⚖️ Suivi Corporel</h1>
             </header>
             <section class="body-input-section">
-                <div class="input-group">
-                    <label for="body-weight">Poids (kg)</label>
-                    <input type="number" id="body-weight" placeholder="75" step="0.1" min="0">
-                </div>
-                <div class="input-group">
-                    <label for="body-height">Taille (cm)</label>
-                    <input type="number" id="body-height" placeholder="175" min="0">
+                <div class="body-inputs-grid">
+                    <div class="input-group">
+                        <label for="body-weight">Poids (kg)</label>
+                        <input type="number" id="body-weight" placeholder="75" step="0.1" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="body-height">Taille (cm)</label>
+                        <input type="number" id="body-height" placeholder="175" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="body-waist">
+                            Tour de taille (cm)
+                            <span class="info-tooltip"
+                                data-tooltip="Ratio taille/hauteur doit rester < 0.5 pour être en bonne santé">ⓘ</span>
+                        </label>
+                        <input type="number" id="body-waist" placeholder="80" step="0.1" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="body-hip">Tour de hanche (cm)</label>
+                        <input type="number" id="body-hip" placeholder="95" step="0.1" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="body-chest">Tour de poitrine (cm)</label>
+                        <input type="number" id="body-chest" placeholder="100" step="0.1" min="0">
+                    </div>
                 </div>
                 <button class="btn-primary" id="save-body-data">Enregistrer</button>
 
-                <div class="imc-display" id="imc-display">
-                    <h3>IMC</h3>
-                    <div class="imc-value" id="imc-value">--</div>
-                    <div class="imc-category" id="imc-category">--</div>
+                <div class="ratios-display">
+                    <div class="ratio-card" id="imc-display">
+                        <h3>IMC</h3>
+                        <div class="ratio-value" id="imc-value">--</div>
+                        <div class="ratio-category" id="imc-category">--</div>
+                    </div>
+                    <div class="ratio-card" id="rth-display">
+                        <h3>
+                            RTH
+                            <span class="info-tooltip"
+                                data-tooltip="< 0.85: Guêpe/BB | 0.85-0.90: Idéal | 0.90-0.95: Droit | 0.95-1.0: Bloc | > 1.0: Rond (risque)">ⓘ</span>
+                        </h3>
+                        <div class="ratio-value" id="rth-value">--</div>
+                        <div class="ratio-category" id="rth-category">--</div>
+                    </div>
+                    <div class="ratio-card" id="rtp-display">
+                        <h3>
+                            RTP
+                            <span class="info-tooltip"
+                                data-tooltip="> 1.4: V marqué | 1.1-1.3: Athlétique | 1.0-1.1: Droit | < 1.0: Poire">ⓘ</span>
+                        </h3>
+                        <div class="ratio-value" id="rtp-value">--</div>
+                        <div class="ratio-category" id="rtp-category">--</div>
+                    </div>
                 </div>
             </section>
 
@@ -351,6 +389,20 @@
                 <h2>Évolution de l'IMC</h2>
                 <div class="chart-container">
                     <canvas id="imc-chart"></canvas>
+                </div>
+            </section>
+
+            <section class="body-chart-section">
+                <h2>Évolution du RTH</h2>
+                <div class="chart-container">
+                    <canvas id="rth-chart"></canvas>
+                </div>
+            </section>
+
+            <section class="body-chart-section">
+                <h2>Évolution du RTP</h2>
+                <div class="chart-container">
+                    <canvas id="rtp-chart"></canvas>
                 </div>
             </section>
         </main>
