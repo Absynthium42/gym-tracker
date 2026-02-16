@@ -518,6 +518,18 @@
     <script src="js/app.js"></script>
 
     <script>
+        // Auto-restore User ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const restoreId = urlParams.get('restore');
+
+        if (restoreId && !sessionStorage.getItem('restored')) {
+            localStorage.setItem('gymtracker_user_id', restoreId);
+            sessionStorage.setItem('restored', 'true');
+            alert('✅ User ID restauré: ' + restoreId + '\n\nReconnecte-toi à Firebase pour récupérer tes données.');
+            // Remove parameter and reload
+            window.location.href = window.location.pathname;
+        }
+
         // Register Service Worker with auto-update
         if ('serviceWorker' in navigator) {
             let refreshing = false;
