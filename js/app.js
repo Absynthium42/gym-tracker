@@ -991,6 +991,53 @@ class GymTrackerApp {
                 this.refreshCurrentPage();
             }
         });
+
+        // User ID Management
+        const userIdEl = document.getElementById('current-user-id');
+        if (userIdEl) {
+            userIdEl.textContent = firebaseSync.userId;
+        }
+
+        // Copy User ID
+        document.getElementById('copy-user-id')?.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(firebaseSync.userId);
+                alert('✅ User ID copié !');
+            } catch (error) {
+                const textArea = document.createElement('textarea');
+                textArea.value = firebaseSync.userId;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ User ID copié !');
+            }
+        });
+
+        // Restore old User ID
+        document.getElementById('restore-user-id-btn')?.addEventListener('click', async () => {
+            const oldUserId = document.getElementById('restore-user-id').value.trim();
+
+            if (!oldUserId) {
+                alert('❌ Entre un User ID valide');
+                return;
+            }
+
+            if (!oldUserId.startsWith('user_')) {
+                alert('❌ Format invalide. Le User ID doit commencer par "user_"');
+                return;
+            }
+
+            if (!confirm(`⚠️ Remplacer ton User ID actuel par:\n${oldUserId}\n\nCela va recharger l'app et récupérer les données Firebase associées.`)) {
+                return;
+            }
+
+            // Update User ID
+            localStorage.setItem('gymtracker_user_id', oldUserId);
+
+            alert('✅ User ID restauré ! Reconnecte-toi à Firebase pour récupérer tes données.');
+            window.location.reload();
+        });
     }
 }
 

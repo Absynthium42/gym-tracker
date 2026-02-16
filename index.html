@@ -465,6 +465,30 @@
                 </div>
 
                 <div class="setting-item">
+                    <h3>🔑 Identifiant Utilisateur</h3>
+                    <p class="setting-desc">Ton User ID unique pour Firebase. Note-le pour récupérer tes données en cas
+                        de problème.</p>
+                    <div class="user-id-display">
+                        <code id="current-user-id"
+                            style="background: var(--bg-input); padding: var(--spacing-sm); border-radius: var(--radius-sm); display: block; margin: var(--spacing-sm) 0; word-break: break-all; font-size: 0.85rem;"></code>
+                        <button class="btn-secondary" id="copy-user-id">Copier l'ID</button>
+                    </div>
+                    <details style="margin-top: var(--spacing-md);">
+                        <summary
+                            style="cursor: pointer; font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-sm);">
+                            🔄 Restaurer un ancien User ID</summary>
+                        <p class="setting-desc" style="font-size: 0.85rem; margin-bottom: var(--spacing-sm);">Si tu as
+                            perdu tes données après avoir vidé le cache, entre ton ancien User ID pour les récupérer
+                            depuis Firebase.</p>
+                        <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-sm);">
+                            <input type="text" id="restore-user-id" placeholder="Ancien User ID (user_...)"
+                                style="flex: 1; padding: var(--spacing-sm); background: var(--bg-input); border: 2px solid transparent; border-radius: var(--radius-sm); color: var(--text-primary);">
+                            <button class="btn-primary" id="restore-user-id-btn">Restaurer</button>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="setting-item">
                     <h3>💾 Export / Import</h3>
                     <p class="setting-desc">Sauvegarde ou restaure tes données</p>
                     <div class="export-buttons">
