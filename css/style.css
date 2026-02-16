@@ -3,36 +3,36 @@
    ========================================== */
 
 :root {
-    /* Colors - Modern Cyan/Emerald Palette */
-    --primary: #14b8a6;
-    /* Teal-500 */
-    --primary-dark: #0d9488;
-    /* Teal-600 */
-    --primary-light: #2dd4bf;
-    /* Teal-400 */
-    --secondary: #06b6d4;
-    /* Cyan-500 */
+    /* Colors - Modern Blue Palette */
+    --primary: #3b82f6;
+    /* Blue-500 */
+    --primary-dark: #2563eb;
+    /* Blue-600 */
+    --primary-light: #60a5fa;
+    /* Blue-400 */
+    --secondary: #0ea5e9;
+    /* Sky-500 */
     --accent: #10b981;
-    /* Emerald-500 */
+    /* Emerald-500 for success */
     --success: #10b981;
     --danger: #ef4444;
 
-    /* Backgrounds - Darker, more modern */
-    --bg-dark: #0a0e1a;
-    --bg-card: #141824;
-    --bg-card-hover: #1f2937;
-    --bg-input: #111827;
+    /* Backgrounds - Clean dark theme */
+    --bg-dark: #0f111a;
+    --bg-card: #1a1d2e;
+    --bg-card-hover: #252942;
+    --bg-input: #151826;
 
     /* Text */
-    --text-primary: #f9fafb;
-    --text-secondary: #9ca3af;
-    --text-muted: #6b7280;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
 
-    /* Gradients - Modern combinations */
-    --gradient-primary: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%);
+    /* Gradients - Blue based */
+    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
     --gradient-push: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
     --gradient-legs: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
-    --gradient-pull: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    --gradient-pull: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
 
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -47,11 +47,11 @@
     --radius-lg: 1.5rem;
     --radius-full: 9999px;
 
-    /* Shadows - Updated with teal glow */
+    /* Shadows - Blue glow */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 20px rgba(20, 184, 166, 0.3);
+    --shadow-glow: 0 0 24px rgba(59, 130, 246, 0.25);
 }
 
 * {
@@ -1700,25 +1700,27 @@ body {
 
 /* Modern Body Fat Card */
 .bodyfat-card-modern {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.05));
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(14, 165, 233, 0.05));
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3)
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
 }
 
 .bodyfat-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: var(--spacing-lg)
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
 }
 
 .bodyfat-header h3 {
     font-size: 1.1rem;
     color: var(--text-primary);
     font-weight: 700;
-    margin: 0
+    margin: 0;
 }
 
 .bodyfat-gauge-container {
@@ -1726,25 +1728,27 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: var(--spacing-md) 0
+    margin: var(--spacing-md) auto;
+    width: fit-content;
 }
 
 .bodyfat-gauge {
     width: 100%;
-    max-width: 300px;
+    max-width: 280px;
     height: auto;
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3))
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+    margin-bottom: var(--spacing-md);
 }
 
 .bodyfat-main-value {
     font-size: 3rem;
     font-weight: 900;
-    background: linear-gradient(135deg, var(--accent), #10b981);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-top: -30px;
-    text-shadow: 0 0 20px rgba(99, 102, 241, 0.3)
+    margin: 0;
+    line-height: 1;
 }
 
 .bodyfat-info {
@@ -1752,7 +1756,7 @@ body {
     flex-direction: column;
     gap: var(--spacing-sm);
     align-items: center;
-    margin-top: var(--spacing-md)
+    margin-top: var(--spacing-md);
 }
 
 .bodyfat-category-badge {
@@ -1763,13 +1767,13 @@ body {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid currentColor;
     text-transform: uppercase;
-    letter-spacing: 0.5px
+    letter-spacing: 0.5px;
 }
 
 .bodyfat-range-text {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    font-style: italic
+    font-style: italic;
 }
 
 .bodyfat-reference {
@@ -1777,7 +1781,7 @@ body {
     background: rgba(255, 255, 255, 0.02);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    border: 1px solid rgba(255, 255, 255, 0.05)
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .bodyfat-reference h3 {
@@ -1785,7 +1789,7 @@ body {
     color: var(--text-primary);
     margin-bottom: var(--spacing-md);
     font-weight: 700;
-    text-align: center
+    text-align: center;
 }
 
 .bodyfat-table {
@@ -1794,11 +1798,11 @@ body {
     border-spacing: 0;
     font-size: 0.9rem;
     overflow: hidden;
-    border-radius: var(--radius-md)
+    border-radius: var(--radius-md);
 }
 
 .bodyfat-table thead th {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(14, 165, 233, 0.2));
     color: var(--text-primary);
     padding: var(--spacing-sm) var(--spacing-md);
     text-align: center;
@@ -1806,79 +1810,79 @@ body {
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2)
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .bodyfat-table thead th:first-child {
     text-align: left;
-    border-top-left-radius: var(--radius-md)
+    border-top-left-radius: var(--radius-md);
 }
 
 .bodyfat-table thead th:last-child {
-    border-top-right-radius: var(--radius-md)
+    border-top-right-radius: var(--radius-md);
 }
 
 .bodyfat-table tbody td {
     padding: var(--spacing-sm) var(--spacing-md);
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    background: rgba(255, 255, 255, 0.02)
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .bodyfat-table tbody td:first-child {
     text-align: left;
     font-weight: 700;
-    border-right: 2px solid rgba(255, 255, 255, 0.1)
+    border-right: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .bodyfat-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.05)
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .bodyfat-table tbody tr.essential td:first-child {
     color: #60a5fa;
-    border-left: 4px solid #60a5fa
+    border-left: 4px solid #60a5fa;
 }
 
 .bodyfat-table tbody tr.athlete td:first-child {
     color: #10b981;
-    border-left: 4px solid #10b981
+    border-left: 4px solid #10b981;
 }
 
 .bodyfat-table tbody tr.fitness td:first-child {
     color: #14b8a6;
-    border-left: 4px solid #14b8a6
+    border-left: 4px solid #14b8a6;
 }
 
 .bodyfat-table tbody tr.average td:first-child {
     color: #f59e0b;
-    border-left: 4px solid #f59e0b
+    border-left: 4px solid #f59e0b;
 }
 
 .bodyfat-table tbody tr.obese td:first-child {
     color: #ef4444;
-    border-left: 4px solid #ef4444
+    border-left: 4px solid #ef4444;
 }
 
 .bodyfat-table tbody tr:last-child td:first-child {
-    border-bottom-left-radius: var(--radius-md)
+    border-bottom-left-radius: var(--radius-md);
 }
 
 .bodyfat-table tbody tr:last-child td:last-child {
-    border-bottom-right-radius: var(--radius-md)
+    border-bottom-right-radius: var(--radius-md);
 }
 
 @media (max-width:480px) {
     .bodyfat-main-value {
-        font-size: 2.5rem
+        font-size: 2.5rem;
     }
 
     .bodyfat-table {
-        font-size: 0.75rem
+        font-size: 0.75rem;
     }
 
     .bodyfat-table thead th,
     .bodyfat-table tbody td {
-        padding: var(--spacing-xs)
+        padding: var(--spacing-xs);
     }
 }
