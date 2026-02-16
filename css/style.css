@@ -1886,3 +1886,5 @@ body {
         padding: var(--spacing-xs);
     }
 }
+/* Mobile centering for body fat card */
+@media (max-width:768px){.ratios-display{width:100%;padding:0 var(--spacing-sm)}.bodyfat-card-modern{max-width:100%;margin:0 auto}}
