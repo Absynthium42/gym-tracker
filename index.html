@@ -494,11 +494,36 @@
     <script src="js/app.js"></script>
 
     <script>
-        // Register Service Worker
+        // Register Service Worker with auto-update
         if ('serviceWorker' in navigator) {
+            let refreshing = false;
+
+            // Detect when SW takes control and reload
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    console.log('New SW activated, reloading...');
+                    window.location.reload();
+                }
+            });
+
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW registered'))
+                    .then(reg => {
+                        console.log('SW registered');
+
+                        // Check for updates every 60 seconds
+                        setInterval(() => {
+                            reg.update();
+                        }, 60000);
+
+                        // Check for updates on page focus
+                        document.addEventListener('visibilitychange', () => {
+                            if (!document.hidden) {
+                                reg.update();
+                            }
+                        });
+                    })
                     .catch(err => console.log('SW registration failed:', err));
             });
         }
