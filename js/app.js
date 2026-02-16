@@ -28,15 +28,13 @@ class GymTrackerApp {
         this.setupProgressPage();
         this.setupBodyPage();
         this.setupSettingsPage();
+        this.setupGoalSection();
         this.setupObjectiveModal();
 
         calendarManager.init();
 
         chartsManager.initProgressChart('progress-chart');
-        chartsManager.initBodyChart('body-chart');
-        chartsManager.initImcChart('imc-chart');
-        chartsManager.initRthChart('rth-chart');
-        chartsManager.initRtpChart('rtp-chart');
+        chartsManager.initBodyFatChart('bodyfat-chart');
 
         window.addEventListener('dataSync', () => {
             this.refreshCurrentPage();
@@ -701,129 +699,205 @@ class GymTrackerApp {
     }
 
     // ==========================================
+    // Goal Section
+    // ==========================================
+    setupGoalSection() {
+        // Load and display existing goal
+        this.updateGoalDisplay();
+
+        document.getElementById('save-goal-btn')?.addEventListener('click', () => {
+            const targetBodyFat = parseFloat(document.getElementById('goal-bodyfat').value);
+            const targetDate = document.getElementById('goal-date').value;
+
+            if (targetBodyFat > 0 && targetDate) {
+                localStorage.setItem('gymtracker_bodyfat_goal', JSON.stringify({
+                    targetBodyFat,
+                    targetDate
+                }));
+                this.updateGoalDisplay();
+                alert('Objectif défini !');
+            } else {
+                alert('Veuillez entrer un taux cible et une date.');
+            }
+        });
+    }
+
+    updateGoalDisplay() {
+        const goalData = localStorage.getItem('gymtracker_bodyfat_goal');
+        const displayEl = document.getElementById('goal-display');
+
+        if (!goalData) {
+            displayEl.classList.remove('active');
+            return;
+        }
+
+        const goal = JSON.parse(goalData);
+        document.getElementById('goal-bodyfat').value = goal.targetBodyFat;
+        document.getElementById('goal-date').value = goal.targetDate;
+
+        // Get current body fat
+        const latestData = firebaseSync.getLatestBodyData();
+        let currentBodyFat = null;
+
+        if (latestData && latestData.height && latestData.waist && latestData.neck) {
+            currentBodyFat = 86.010 * Math.log10(latestData.waist - latestData.neck)
+                - 70.041 * Math.log10(latestData.height)
+                + 36.76;
+            currentBodyFat = Math.round(currentBodyFat * 10) / 10;
+        }
+
+        // Calculate days remaining
+        const today = new Date();
+        const target = new Date(goal.targetDate);
+        const daysRemaining = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+
+        // Calculate progress
+        let progressHtml = '';
+        if (currentBodyFat !== null) {
+            const difference = currentBodyFat - goal.targetBodyFat;
+            const percentageToGo = currentBodyFat > goal.targetBodyFat
+                ? Math.abs(difference / currentBodyFat * 100)
+                : 0;
+
+            const progressPercentage = currentBodyFat > goal.targetBodyFat
+                ? Math.max(0, Math.min(100, 100 - percentageToGo))
+                : 100;
+
+            progressHtml = `
+                <div class="goal-info">
+                    <div class="goal-stat">
+                        <div class="goal-stat-label">Actuel</div>
+                        <div class="goal-stat-value">${currentBodyFat}%</div>
+                    </div>
+                    <div class="goal-stat">
+                        <div class="goal-stat-label">Objectif</div>
+                        <div class="goal-stat-value">${goal.targetBodyFat}%</div>
+                    </div>
+                    <div class="goal-stat">
+                        <div class="goal-stat-label">Reste</div>
+                        <div class="goal-stat-value">${difference > 0 ? '-' : '+'}${Math.abs(difference).toFixed(1)}%</div>
+                    </div>
+                    <div class="goal-stat">
+                        <div class="goal-stat-label">Jours restants</div>
+                        <div class="goal-stat-value">${daysRemaining}</div>
+                    </div>
+                </div>
+                <div class="goal-progress-bar">
+                    <div class="goal-progress-fill" style="width: ${progressPercentage}%"></div>
+                </div>
+            `;
+        } else {
+            progressHtml = `
+                <div style="text-align: center; color: var(--text-secondary);">
+                    Entrez vos mesures corporelles pour voir votre progression.
+                </div>
+            `;
+        }
+
+        displayEl.innerHTML = progressHtml;
+        displayEl.classList.add('active');
+    }
+
+    // ==========================================
     // Body Tracking Page
     // ==========================================
     setupBodyPage() {
         document.getElementById('save-body-data')?.addEventListener('click', async () => {
-            const weightInput = document.getElementById('body-weight').value.replace(',', '.');
             const heightInput = document.getElementById('body-height').value.replace(',', '.');
             const waistInput = document.getElementById('body-waist').value.replace(',', '.');
-            const hipInput = document.getElementById('body-hip').value.replace(',', '.');
-            const chestInput = document.getElementById('body-chest').value.replace(',', '.');
+            const neckInput = document.getElementById('body-neck').value.replace(',', '.');
+            const ageInput = document.getElementById('body-age').value;
 
-            const weight = parseFloat(weightInput) || 0;
             const height = parseFloat(heightInput) || 0;
             const waist = parseFloat(waistInput) || 0;
-            const hip = parseFloat(hipInput) || 0;
-            const chest = parseFloat(chestInput) || 0;
+            const neck = parseFloat(neckInput) || 0;
+            const age = parseInt(ageInput) || 0;
 
-            // At least weight or one measurement required
-            if (weight > 0 || waist > 0 || hip > 0 || chest > 0) {
-                // Get stored values as fallbacks
-                const latestData = firebaseSync.getLatestBodyData();
-                const finalWeight = weight > 0 ? weight : (latestData?.weight || 0);
-                const finalHeight = height > 0 ? height : (latestData?.height || 0);
-                const finalWaist = waist > 0 ? waist : null;
-                const finalHip = hip > 0 ? hip : null;
-                const finalChest = chest > 0 ? chest : null;
+            // All three measurements required for Navy formula
+            if (height > 0 && waist > 0 && neck > 0) {
+                // Save age to localStorage if provided
+                if (age > 0) {
+                    localStorage.setItem('gymtracker_user_age', age.toString());
+                }
 
-                await firebaseSync.saveBodyData(finalWeight, finalHeight, finalWaist, finalHip, finalChest);
+                await firebaseSync.saveBodyData(height, waist, neck);
                 this.updateBodyPage();
                 alert('Données enregistrées !');
             } else {
-                alert('Veuillez entrer au moins une mesure.');
+                alert('Veuillez entrer les 3 mesures (taille, tour de taille, tour de cou).');
             }
         });
     }
 
     updateBodyPage() {
         const latestData = firebaseSync.getLatestBodyData();
-        const bodyData = firebaseSync.getBodyData();
 
-        if (latestData) {
-            // Pre-fill height from latest data
+        // Load age from localStorage
+        const savedAge = localStorage.getItem('gymtracker_user_age');
+        if (savedAge) {
+            document.getElementById('body-age').value = savedAge;
+        }
+
+        if (latestData && latestData.height && latestData.waist && latestData.neck) {
+            // Pre-fill inputs from latest data
             document.getElementById('body-height').value = latestData.height || '';
+            document.getElementById('body-waist').value = latestData.waist || '';
+            document.getElementById('body-neck').value = latestData.neck || '';
 
-            // Calculate and display IMC
-            if (latestData.weight && latestData.height) {
-                const heightM = latestData.height / 100;
-                const imc = latestData.weight / (heightM * heightM);
-                const imcRounded = Math.round(imc * 10) / 10;
+            // Calculate Navy Body Fat % (Men)
+            // Formula: 86.010 × log10(waist - neck) - 70.041 × log10(height) + 36.76
+            const bodyFat = 86.010 * Math.log10(latestData.waist - latestData.neck)
+                - 70.041 * Math.log10(latestData.height)
+                + 36.76;
 
-                document.getElementById('imc-value').textContent = imcRounded;
+            const bodyFatRounded = Math.round(bodyFat * 10) / 10;
 
-                let category = '';
-                if (imc < 18.5) {
-                    category = 'Insuffisance';
-                } else if (imc < 25) {
-                    category = 'Normal';
-                } else if (imc < 30) {
-                    category = 'Surpoids';
-                } else {
-                    category = 'Obésité';
-                }
+            // Calculate ±3% range
+            const minBodyFat = Math.round((bodyFat - 3) * 10) / 10;
+            const maxBodyFat = Math.round((bodyFat + 3) * 10) / 10;
 
-                const categoryEl = document.getElementById('imc-category');
-                categoryEl.textContent = category;
-                categoryEl.className = 'ratio-category';
-            }
-        }
+            document.getElementById('bodyfat-value').textContent = `${bodyFatRounded}%`;
+            document.getElementById('bodyfat-range').textContent = `[${minBodyFat}% - ${maxBodyFat}%]`;
 
-        // Find latest entry with waist AND hip for RTH
-        const latestRthData = [...bodyData].reverse().find(d => d.waist && d.hip);
-        if (latestRthData) {
-            const rth = latestRthData.waist / latestRthData.hip;
-            const rthRounded = Math.round(rth * 100) / 100;
-
-            document.getElementById('rth-value').textContent = rthRounded;
-
-            let rthCategory = '';
-            if (rth < 0.85) {
-                rthCategory = 'Guêpe/BB';
-            } else if (rth < 0.90) {
-                rthCategory = 'Idéal';
-            } else if (rth < 0.95) {
-                rthCategory = 'Droit';
-            } else if (rth < 1.0) {
-                rthCategory = 'Bloc';
-            } else {
-                rthCategory = 'Rond ⚠️';
-            }
-            document.getElementById('rth-category').textContent = rthCategory;
+            // Calculate category based on age
+            const age = parseInt(document.getElementById('body-age').value) || 30;
+            const category = this.getBodyFatCategory(bodyFatRounded, age);
+            const categoryEl = document.getElementById('bodyfat-category');
+            categoryEl.textContent = category.label;
+            categoryEl.style.color = category.color;
         } else {
-            document.getElementById('rth-value').textContent = '--';
-            document.getElementById('rth-category').textContent = '--';
+            document.getElementById('bodyfat-value').textContent = '--';
+            document.getElementById('bodyfat-range').textContent = '--';
+            document.getElementById('bodyfat-category').textContent = '--';
+            document.getElementById('bodyfat-category').style.color = '';
         }
 
-        // Find latest entry with waist AND chest for RTP
-        const latestRtpData = [...bodyData].reverse().find(d => d.waist && d.chest);
-        if (latestRtpData) {
-            const rtp = latestRtpData.chest / latestRtpData.waist;
-            const rtpRounded = Math.round(rtp * 100) / 100;
+        // Update chart
+        chartsManager.updateBodyFatChart();
+    }
 
-            document.getElementById('rtp-value').textContent = rtpRounded;
-
-            let rtpCategory = '';
-            if (rtp > 1.4) {
-                rtpCategory = 'V Marqué';
-            } else if (rtp >= 1.1) {
-                rtpCategory = 'Athlétique';
-            } else if (rtp >= 1.0) {
-                rtpCategory = 'Droit';
-            } else {
-                rtpCategory = 'Poire';
-            }
-            document.getElementById('rtp-category').textContent = rtpCategory;
+    getBodyFatCategory(bodyFat, age) {
+        // Define thresholds based on age groups (for men)
+        let thresholds;
+        if (age < 40) {
+            thresholds = { essential: 5, athlete: 13, fitness: 17, average: 24 };
+        } else if (age < 60) {
+            thresholds = { essential: 5, athlete: 14, fitness: 19, average: 26 };
         } else {
-            document.getElementById('rtp-value').textContent = '--';
-            document.getElementById('rtp-category').textContent = '--';
+            thresholds = { essential: 5, athlete: 15, fitness: 20, average: 27 };
         }
 
-        // Update all charts
-        chartsManager.updateBodyChart();
-        chartsManager.updateImcChart();
-        chartsManager.updateRthChart();
-        chartsManager.updateRtpChart();
+        if (bodyFat <= thresholds.essential) {
+            return { label: 'Essentiel', color: '#60a5fa' };
+        } else if (bodyFat <= thresholds.athlete) {
+            return { label: 'Athlète', color: '#10b981' };
+        } else if (bodyFat <= thresholds.fitness) {
+            return { label: 'Fitness', color: '#14b8a6' };
+        } else if (bodyFat <= thresholds.average) {
+            return { label: 'Moyen', color: '#f59e0b' };
+        } else {
+            return { label: 'Obésité', color: '#ef4444' };
+        }
     }
 
     // ==========================================

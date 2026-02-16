@@ -5,10 +5,7 @@
 class ChartsManager {
     constructor() {
         this.progressChart = null;
-        this.bodyChart = null;
-        this.imcChart = null;
-        this.rthChart = null;
-        this.rtpChart = null;
+        this.bodyFatChart = null;
     }
 
     initProgressChart(canvasId) {
@@ -110,20 +107,21 @@ class ChartsManager {
         this.progressChart.update();
     }
 
-    initBodyChart(canvasId) {
+    // Body Fat Chart (Navy Formula)
+    initBodyFatChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        if (this.bodyChart) {
-            this.bodyChart.destroy();
+        if (this.bodyFatChart) {
+            this.bodyFatChart.destroy();
         }
 
-        this.bodyChart = new Chart(ctx, {
+        this.bodyFatChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: [],
                 datasets: [{
-                    label: 'Poids (kg)',
+                    label: 'Masse Grasse (%)',
                     data: [],
                     borderColor: '#10b981',
                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -170,36 +168,47 @@ class ChartsManager {
                         ticks: {
                             color: '#71717a'
                         },
-                        beginAtZero: false
+                        suggestedMin: 5,
+                        suggestedMax: 30
                     }
                 }
             }
         });
     }
 
-    updateBodyChart() {
-        if (!this.bodyChart) return;
+    updateBodyFatChart() {
+        if (!this.bodyFatChart) return;
 
         const bodyData = firebaseSync.getBodyData();
 
-        if (bodyData.length === 0) {
-            this.bodyChart.data.labels = [];
-            this.bodyChart.data.datasets[0].data = [];
-            this.bodyChart.update();
+        // Filter entries with all required measurements
+        const validData = bodyData.filter(entry => entry.height && entry.waist && entry.neck);
+
+        if (validData.length === 0) {
+            this.bodyFatChart.data.labels = [];
+            this.bodyFatChart.data.datasets[0].data = [];
+            this.bodyFatChart.update();
             return;
         }
 
-        const labels = bodyData.map(entry =>
+        const labels = validData.map(entry =>
             new Date(entry.date).toLocaleDateString('fr-FR', {
                 day: '2-digit',
                 month: '2-digit'
             })
         );
-        const data = bodyData.map(entry => entry.weight);
 
-        this.bodyChart.data.labels = labels;
-        this.bodyChart.data.datasets[0].data = data;
-        this.bodyChart.update();
+        // Calculate body fat % for each entry using Navy formula
+        const data = validData.map(entry => {
+            const bodyFat = 86.010 * Math.log10(entry.waist - entry.neck)
+                - 70.041 * Math.log10(entry.height)
+                + 36.76;
+            return Math.round(bodyFat * 10) / 10;
+        });
+
+        this.bodyFatChart.data.labels = labels;
+        this.bodyFatChart.data.datasets[0].data = data;
+        this.bodyFatChart.update();
     }
 
     getExerciseStats(exerciseId) {
@@ -229,289 +238,6 @@ class ChartsManager {
             totalVolume: Math.round(weights.reduce((a, b) => a + b, 0)),
             sessionCount: uniqueDates.size
         };
-    }
-
-    initImcChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        if (this.imcChart) {
-            this.imcChart.destroy();
-        }
-
-        this.imcChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'IMC',
-                    data: [],
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#f59e0b',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: '#1a1a2e',
-                        titleColor: '#ffffff',
-                        bodyColor: '#a1a1aa',
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
-                        borderWidth: 1,
-                        padding: 12,
-                        displayColors: false
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        },
-                        ticks: {
-                            color: '#71717a',
-                            maxRotation: 45
-                        }
-                    },
-                    y: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        },
-                        ticks: {
-                            color: '#71717a'
-                        },
-                        suggestedMin: 15,
-                        suggestedMax: 35
-                    }
-                }
-            }
-        });
-    }
-
-    updateImcChart() {
-        if (!this.imcChart) return;
-
-        const bodyData = firebaseSync.getBodyData();
-
-        if (bodyData.length === 0) {
-            this.imcChart.data.labels = [];
-            this.imcChart.data.datasets[0].data = [];
-            this.imcChart.update();
-            return;
-        }
-
-        // Filter entries that have both weight and height
-        const validData = bodyData.filter(entry => entry.weight && entry.height);
-
-        if (validData.length === 0) {
-            this.imcChart.data.labels = [];
-            this.imcChart.data.datasets[0].data = [];
-            this.imcChart.update();
-            return;
-        }
-
-        const labels = validData.map(entry =>
-            new Date(entry.date).toLocaleDateString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit'
-            })
-        );
-
-        const data = validData.map(entry => {
-            const heightM = entry.height / 100;
-            return Math.round((entry.weight / (heightM * heightM)) * 10) / 10;
-        });
-
-        this.imcChart.data.labels = labels;
-        this.imcChart.data.datasets[0].data = data;
-        this.imcChart.update();
-    }
-
-    // RTH Chart (Waist-to-Hip Ratio)
-    initRthChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        if (this.rthChart) {
-            this.rthChart.destroy();
-        }
-
-        this.rthChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'RTH',
-                    data: [],
-                    borderColor: '#f97316',
-                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#f97316',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1a1a2e',
-                        titleColor: '#ffffff',
-                        bodyColor: '#a1a1aa',
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
-                        borderWidth: 1,
-                        padding: 12,
-                        displayColors: false
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#71717a', maxRotation: 45 }
-                    },
-                    y: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#71717a' },
-                        suggestedMin: 0.7,
-                        suggestedMax: 1.1
-                    }
-                }
-            }
-        });
-    }
-
-    updateRthChart() {
-        if (!this.rthChart) return;
-
-        const bodyData = firebaseSync.getBodyData();
-        // Only entries with both waist and hip (same day)
-        const validData = bodyData.filter(entry => entry.waist && entry.hip);
-
-        if (validData.length === 0) {
-            this.rthChart.data.labels = [];
-            this.rthChart.data.datasets[0].data = [];
-            this.rthChart.update();
-            return;
-        }
-
-        const labels = validData.map(entry =>
-            new Date(entry.date).toLocaleDateString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit'
-            })
-        );
-
-        const data = validData.map(entry =>
-            Math.round((entry.waist / entry.hip) * 100) / 100
-        );
-
-        this.rthChart.data.labels = labels;
-        this.rthChart.data.datasets[0].data = data;
-        this.rthChart.update();
-    }
-
-    // RTP Chart (Chest-to-Waist Ratio)
-    initRtpChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        if (this.rtpChart) {
-            this.rtpChart.destroy();
-        }
-
-        this.rtpChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'RTP',
-                    data: [],
-                    borderColor: '#a855f7',
-                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#a855f7',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1a1a2e',
-                        titleColor: '#ffffff',
-                        bodyColor: '#a1a1aa',
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
-                        borderWidth: 1,
-                        padding: 12,
-                        displayColors: false
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#71717a', maxRotation: 45 }
-                    },
-                    y: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#71717a' },
-                        suggestedMin: 0.8,
-                        suggestedMax: 1.6
-                    }
-                }
-            }
-        });
-    }
-
-    updateRtpChart() {
-        if (!this.rtpChart) return;
-
-        const bodyData = firebaseSync.getBodyData();
-        // Only entries with both waist and chest (same day)
-        const validData = bodyData.filter(entry => entry.waist && entry.chest);
-
-        if (validData.length === 0) {
-            this.rtpChart.data.labels = [];
-            this.rtpChart.data.datasets[0].data = [];
-            this.rtpChart.update();
-            return;
-        }
-
-        const labels = validData.map(entry =>
-            new Date(entry.date).toLocaleDateString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit'
-            })
-        );
-
-        const data = validData.map(entry =>
-            Math.round((entry.chest / entry.waist) * 100) / 100
-        );
-
-        this.rtpChart.data.labels = labels;
-        this.rtpChart.data.datasets[0].data = data;
-        this.rtpChart.update();
     }
 }
 

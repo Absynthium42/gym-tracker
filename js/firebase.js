@@ -227,16 +227,14 @@ class FirebaseSync {
         });
     }
 
-    // Body data
-    async saveBodyData(weight, height, waist = null, hip = null, chest = null) {
+    // Body data (Navy Body Fat Calculator)
+    async saveBodyData(height, waist, neck) {
         const data = this.getData();
         data.bodyData.push({
             date: new Date().toISOString(),
-            weight: weight,
             height: height,
             waist: waist,
-            hip: hip,
-            chest: chest
+            neck: neck
         });
         await this.saveData(data);
     }
