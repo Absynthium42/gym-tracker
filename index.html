@@ -354,15 +354,42 @@
                 <button class="btn-primary" id="save-body-data">Enregistrer</button>
 
                 <div class="ratios-display">
-                    <div class="ratio-card" id="bodyfat-display">
-                        <h3>
-                            Taux de Masse Grasse
+                    <div class="bodyfat-card-modern" id="bodyfat-display">
+                        <div class="bodyfat-header">
+                            <h3>💪 Taux de Masse Grasse</h3>
                             <span class="info-tooltip"
                                 data-tooltip="Formule US Navy (Hommes) - Incertitude ±3%">ⓘ</span>
-                        </h3>
-                        <div class="ratio-value" id="bodyfat-value">--</div>
-                        <div class="ratio-category" id="bodyfat-range">--</div>
-                        <div class="ratio-category" id="bodyfat-category">--</div>
+                        </div>
+
+                        <div class="bodyfat-gauge-container">
+                            <svg class="bodyfat-gauge" viewBox="0 0 200 120">
+                                <!-- Background arc -->
+                                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.1)"
+                                    stroke-width="20" />
+                                <!-- Colored segments -->
+                                <path d="M 20 100 A 80 80 0 0 1 52 42" fill="none" stroke="#60a5fa" stroke-width="20"
+                                    stroke-linecap="round" />
+                                <path d="M 52 42 A 80 80 0 0 1 100 20" fill="none" stroke="#10b981" stroke-width="20"
+                                    stroke-linecap="round" />
+                                <path d="M 100 20 A 80 80 0 0 1 148 42" fill="none" stroke="#14b8a6" stroke-width="20"
+                                    stroke-linecap="round" />
+                                <path d="M 148 42 A 80 80 0 0 1 170 80" fill="none" stroke="#f59e0b" stroke-width="20"
+                                    stroke-linecap="round" />
+                                <path d="M 170 80 A 80 80 0 0 1 180 100" fill="none" stroke="#ef4444" stroke-width="20"
+                                    stroke-linecap="round" />
+                                <!-- Needle -->
+                                <line id="bodyfat-needle" x1="100" y1="100" x2="100" y2="40" stroke="white"
+                                    stroke-width="3" stroke-linecap="round" />
+                                <circle cx="100" cy="100" r="5" fill="white" />
+                            </svg>
+
+                            <div class="bodyfat-main-value" id="bodyfat-value">--</div>
+                        </div>
+
+                        <div class="bodyfat-info">
+                            <div class="bodyfat-category-badge" id="bodyfat-category">--</div>
+                            <div class="bodyfat-range-text" id="bodyfat-range">--</div>
+                        </div>
                     </div>
                 </div>
 

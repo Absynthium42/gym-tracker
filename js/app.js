@@ -857,7 +857,7 @@ class GymTrackerApp {
             const maxBodyFat = Math.round((bodyFat + 3) * 10) / 10;
 
             document.getElementById('bodyfat-value').textContent = `${bodyFatRounded}%`;
-            document.getElementById('bodyfat-range').textContent = `[${minBodyFat}% - ${maxBodyFat}%]`;
+            document.getElementById('bodyfat-range').textContent = `±3% [${minBodyFat}% - ${maxBodyFat}%]`;
 
             // Calculate category based on age
             const age = parseInt(document.getElementById('body-age').value) || 30;
@@ -865,15 +865,43 @@ class GymTrackerApp {
             const categoryEl = document.getElementById('bodyfat-category');
             categoryEl.textContent = category.label;
             categoryEl.style.color = category.color;
+            categoryEl.style.borderColor = category.color;
+
+            // Update gauge needle
+            this.updateBodyFatGaugeNeedle(bodyFatRounded);
         } else {
             document.getElementById('bodyfat-value').textContent = '--';
             document.getElementById('bodyfat-range').textContent = '--';
             document.getElementById('bodyfat-category').textContent = '--';
             document.getElementById('bodyfat-category').style.color = '';
+            document.getElementById('bodyfat-category').style.borderColor = '';
         }
 
         // Update chart
         chartsManager.updateBodyFatChart();
+    }
+
+    updateBodyFatGaugeNeedle(percentage) {
+        const needle = document.getElementById('bodyfat-needle');
+        if (!needle) return;
+
+        // Map percentage (0-50%) to angle (0-180 degrees)
+        // We use 50% as max for better visualization
+        const maxPercentage = 50;
+        const clampedPercentage = Math.min(percentage, maxPercentage);
+        const angle = (clampedPercentage / maxPercentage) * 180;
+
+        // Calculate needle endpoint
+        const centerX = 100;
+        const centerY = 100;
+        const length = 60;
+        const angleRad = (angle - 90) * (Math.PI / 180); // -90 to start from left
+
+        const x2 = centerX + length * Math.cos(angleRad);
+        const y2 = centerY + length * Math.sin(angleRad);
+
+        needle.setAttribute('x2', x2);
+        needle.setAttribute('y2', y2);
     }
 
     getBodyFatCategory(bodyFat, age) {
