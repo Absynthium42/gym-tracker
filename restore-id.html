@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurer User ID</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0f111a;
+            color: white;
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .success {
+            background: #10b981;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        code {
+            background: #1a1d2e;
+            padding: 10px;
+            border-radius: 5px;
+            display: block;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔑 Restaurer User ID</h1>
+
+    <p>ID actuel :</p>
+    <code id="current-id"></code>
+
+    <h2>Choisis ton ancien ID :</h2>
+
+    <button onclick="restore('user_1765907967625_p4ewjvk32')">
+        ID du 16 déc 2025<br>
+        <small style="opacity: 0.7;">user_1765907967625_p4ewjvk32</small>
+    </button>
+
+    <button onclick="restore('user_1768924900227_tlovb3pqw')">
+        ID du 20 jan 2026 (RECOMMANDÉ)<br>
+        <small style="opacity: 0.7;">user_1768924900227_tlovb3pqw</small>
+    </button>
+
+    <button onclick="restore('user_1771229459116_0qk1ac8og')">
+        ID d'aujourd'hui<br>
+        <small style="opacity: 0.7;">user_1771229459116_0qk1ac8og</small>
+    </button>
+
+    <div class="success" id="success">
+        ✅ User ID restauré ! Retourne sur l'app et reconnecte-toi à Firebase.
+    </div>
+
+    <script>
+        // Afficher l'ID actuel
+        document.getElementById('current-id').textContent =
+            localStorage.getItem('gymtracker_user_id') || 'Aucun';
+
+        function restore(userId) {
+            if (confirm('Restaurer cet ID ?\n\n' + userId)) {
+                localStorage.setItem('gymtracker_user_id', userId);
+                document.getElementById('current-id').textContent = userId;
+                document.getElementById('success').style.display = 'block';
+
+                setTimeout(() => {
+                    alert('✅ Fait ! Retourne sur ton app et reconnecte Firebase.');
+                }, 500);
+            }
+        }
+    </script>
+</body>
+
+</html>
