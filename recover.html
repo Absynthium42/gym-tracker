@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Récupérer les données</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0f111a;
+            color: white;
+            text-align: center;
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .info {
+            background: #1a1d2e;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔧 Récupération Données</h1>
+
+    <div class="info">
+        <p><strong>User ID:</strong><br>user_1768924900227_tlovb3pqw</p>
+    </div>
+
+    <button onclick="recover()">
+        ⬇️ RÉCUPÉRER MES DONNÉES
+    </button>
+
+    <div id="status"></div>
+
+    <script>
+        function recover() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Récupération...';
+
+            const userId = 'user_1768924900227_tlovb3pqw';
+            const firebaseUrl = 'https://gym-tracker-ffce7-default-rtdb.europe-west1.firebasedatabase.app';
+
+            fetch(firebaseUrl + '/users/' + userId + '/data.json')
+                .then(r => r.json())
+                .then(data => {
+                    if (data) {
+                        localStorage.setItem('gymtracker_data', JSON.stringify(data));
+                        localStorage.setItem('gymtracker_user_id', userId);
+                        alert('✅ Données récupérées !\n\nRetourne sur l\'app maintenant.');
+                        document.getElementById('status').innerHTML =
+                            '<div style="background:#10b981;padding:15px;border-radius:10px;margin-top:20px;">' +
+                            '✅ <strong>C\'EST BON !</strong><br>Retourne sur l\'app</div>';
+                    } else {
+                        alert('❌ Aucune donnée trouvée');
+                        btn.disabled = false;
+                        btn.textContent = '⬇️ RÉCUPÉRER MES DONNÉES';
+                    }
+                })
+                .catch(err => {
+                    alert('❌ Erreur: ' + err.message);
+                    btn.disabled = false;
+                    btn.textContent = '⬇️ RÉCUPÉRER MES DONNÉES';
+                });
+        }
+    </script>
+</body>
+
+</html>
