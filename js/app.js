@@ -31,14 +31,17 @@ class GymTrackerApp {
         this.setupGoalSection();
         this.setupObjectiveModal();
 
+        // Listen for Firebase data sync
+        window.addEventListener('dataSync', () => {
+            console.log('Data synced from Firebase, refreshing UI...');
+            this.refreshCurrentPage();
+            this.loadCalendar();
+        });
+
         calendarManager.init();
 
         chartsManager.initProgressChart('progress-chart');
         chartsManager.initBodyFatChart('bodyfat-chart');
-
-        window.addEventListener('dataSync', () => {
-            this.refreshCurrentPage();
-        });
 
         // Try to connect to Firebase in background
         console.log('App initialized, starting background sync...');
