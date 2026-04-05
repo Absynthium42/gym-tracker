@@ -1172,7 +1172,7 @@ body {
 }
 
 .calendar-day.workout-legs::after {
-    background: var(--success);
+    background: var(--danger);
 }
 
 .calendar-day.workout-pull::after {
@@ -1207,7 +1207,7 @@ body {
 }
 
 .legend-dot.legs {
-    background: var(--success);
+    background: var(--danger);
 }
 
 .legend-dot.pull {
