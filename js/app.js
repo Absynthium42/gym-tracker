@@ -462,6 +462,38 @@ class GymTrackerApp {
 
     startRest(seconds, nextPreview) {
         document.getElementById('next-preview').textContent = nextPreview;
+
+        const workout = this.currentWorkout;
+        const targetExercise = workout.exercises[this.currentExerciseIndex];
+        let statsText = '';
+        
+        if (targetExercise && !targetExercise.isCombo) {
+            const pr = firebaseSync.getPersonalRecord(targetExercise.id, this.currentSeriesIndex);
+            const prevDiff = firebaseSync.getDifficultyRating(targetExercise.id, this.currentSeriesIndex);
+            
+            let statsParts = [];
+            if (pr !== null) statsParts.push(`🏆 ${pr} kg`);
+            if (prevDiff) {
+                const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
+                statsParts.push(`Diff. Préc: ${labels[prevDiff]}`);
+            }
+            statsText = statsParts.join(' • ');
+        } else if (targetExercise && targetExercise.isCombo) {
+            let prs = [];
+            targetExercise.subExercises.forEach(subEx => {
+                const pr = firebaseSync.getPersonalRecord(subEx.id, this.currentSeriesIndex);
+                if (pr !== null) prs.push(`${pr}kg`);
+            });
+            if (prs.length > 0) {
+                statsText = `🏆 ${prs.join(' + ')}`;
+            }
+        }
+        
+        const statsEl = document.getElementById('next-series-stats');
+        if (statsEl) {
+            statsEl.textContent = statsText;
+        }
+
         this.navigateTo('rest');
 
         restTimer.start(seconds, {

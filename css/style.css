@@ -855,7 +855,14 @@ body {
 .next-exercise-preview {
     font-size: 0.875rem;
     color: var(--text-secondary);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-xs);
+}
+
+.next-series-stats {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xl);
+    font-weight: 500;
 }
 
 .next-exercise-preview span {
