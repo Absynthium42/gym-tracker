@@ -342,7 +342,8 @@ class FirebaseSync {
         for (const key of Object.keys(data.weights)) {
             const [exerciseId, seriesIndex] = key.split('_');
             const exercise = getExerciseById(exerciseId);
-            const exerciseName = exercise ? exercise.name : exerciseId;
+            const customName = this.getCustomExerciseName(exerciseId);
+            const exerciseName = customName || (exercise ? exercise.name : exerciseId);
 
             for (const record of data.weights[key]) {
                 csv += `${record.date},${exerciseName},${parseInt(seriesIndex) + 1},${record.weight}\n`;

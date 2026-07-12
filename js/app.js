@@ -250,7 +250,9 @@ class GymTrackerApp {
             // Setup combo sub-exercises
             exercise.subExercises.forEach((subEx, idx) => {
                 const num = idx + 1;
-                document.getElementById(`combo-title-${num}`).textContent = subEx.name;
+                const subCustomName = firebaseSync.getCustomExerciseName(subEx.id);
+                const subDisplayName = subCustomName || subEx.name;
+                document.getElementById(`combo-title-${num}`).textContent = subDisplayName;
                 document.getElementById(`combo-weight-${num}`).value = 0;
 
                 // Show PR for sub-exercise
@@ -357,8 +359,9 @@ class GymTrackerApp {
                     // Check for new PR
                     const currentPR = firebaseSync.getPersonalRecord(subEx.id, this.currentSeriesIndex);
                     if (currentPR === null || weight > currentPR) {
+                        const subCustom = firebaseSync.getCustomExerciseName(subEx.id);
                         this.sessionData.newPRs.push({
-                            exercise: subEx.name,
+                            exercise: subCustom || subEx.name,
                             series: this.currentSeriesIndex + 1,
                             weight: weight,
                             previousPR: currentPR
@@ -368,7 +371,7 @@ class GymTrackerApp {
                     // Store in session data
                     this.sessionData.exercises.push({
                         exerciseId: subEx.id,
-                        exerciseName: subEx.name,
+                        exerciseName: (firebaseSync.getCustomExerciseName(subEx.id) || subEx.name),
                         series: this.currentSeriesIndex + 1,
                         weight: weight,
                         reps: series.reps
@@ -393,7 +396,7 @@ class GymTrackerApp {
                 const currentPR = firebaseSync.getPersonalRecord(exercise.id, this.currentSeriesIndex);
                 if (currentPR === null || weight > currentPR) {
                     this.sessionData.newPRs.push({
-                        exercise: exercise.name,
+                        exercise: (firebaseSync.getCustomExerciseName(exercise.id) || exercise.name),
                         series: this.currentSeriesIndex + 1,
                         weight: weight,
                         previousPR: currentPR
@@ -403,7 +406,7 @@ class GymTrackerApp {
                 // Store in session data - will be saved only on workout completion
                 this.sessionData.exercises.push({
                     exerciseId: exercise.id,
-                    exerciseName: exercise.name,
+                    exerciseName: (firebaseSync.getCustomExerciseName(exercise.id) || exercise.name),
                     series: this.currentSeriesIndex + 1,
                     weight: weight,
                     reps: series.reps
@@ -434,7 +437,9 @@ class GymTrackerApp {
 
             // Start rest timer before next exercise
             if (series.rest > 0) {
-                this.startRest(series.rest, `${workout.exercises[this.currentExerciseIndex].name} - Série 1`);
+                const nextEx = workout.exercises[this.currentExerciseIndex];
+                const nextExName = firebaseSync.getCustomExerciseName(nextEx.id) || nextEx.name;
+                this.startRest(series.rest, `${nextExName} - Série 1`);
             } else {
                 this.showExercise();
             }
@@ -709,7 +714,7 @@ class GymTrackerApp {
             return `
                 <div class="objective-item ${achieved ? 'objective-achieved' : ''}">
                     <div class="objective-info">
-                        <h4>${exercise ? exercise.name : obj.exerciseId}</h4>
+                        <h4>${exercise ? (firebaseSync.getCustomExerciseName(exercise.id) || exercise.name) : obj.exerciseId}</h4>
                         <div class="objective-progress">${progress}% atteint</div>
                     </div>
                     <div class="objective-target">
