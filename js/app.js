@@ -468,24 +468,24 @@ class GymTrackerApp {
         let statsText = '';
         
         if (targetExercise && !targetExercise.isCombo) {
-            const pr = firebaseSync.getPersonalRecord(targetExercise.id, this.currentSeriesIndex);
+            const lastWeight = firebaseSync.getLastWeight(targetExercise.id, this.currentSeriesIndex);
             const prevDiff = firebaseSync.getDifficultyRating(targetExercise.id, this.currentSeriesIndex);
             
             let statsParts = [];
-            if (pr !== null) statsParts.push(`🏆 ${pr} kg`);
+            if (lastWeight !== null) statsParts.push(`Préc: ${lastWeight} kg`);
             if (prevDiff) {
                 const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
-                statsParts.push(`Diff. Préc: ${labels[prevDiff]}`);
+                statsParts.push(`Diff: ${labels[prevDiff]}`);
             }
             statsText = statsParts.join(' • ');
         } else if (targetExercise && targetExercise.isCombo) {
-            let prs = [];
+            let weights = [];
             targetExercise.subExercises.forEach(subEx => {
-                const pr = firebaseSync.getPersonalRecord(subEx.id, this.currentSeriesIndex);
-                if (pr !== null) prs.push(`${pr}kg`);
+                const lastWeight = firebaseSync.getLastWeight(subEx.id, this.currentSeriesIndex);
+                if (lastWeight !== null) weights.push(`${lastWeight}kg`);
             });
-            if (prs.length > 0) {
-                statsText = `🏆 ${prs.join(' + ')}`;
+            if (weights.length > 0) {
+                statsText = `Préc: ${weights.join(' + ')}`;
             }
         }
         

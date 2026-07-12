@@ -204,6 +204,13 @@ class FirebaseSync {
         return Math.max(...history.map(h => h.weight));
     }
 
+    getLastWeight(exerciseId, seriesIndex = null) {
+        const history = this.getWeightHistory(exerciseId, seriesIndex);
+        if (history.length === 0) return null;
+        // History is stored chronologically, last entry is most recent
+        return history[history.length - 1].weight;
+    }
+
     // Workout history
     async saveWorkoutSession(session) {
         const data = this.getData();
