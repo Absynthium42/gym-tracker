@@ -28,7 +28,6 @@ class GymTrackerApp {
         this.setupProgressPage();
         this.setupBodyPage();
         this.setupSettingsPage();
-        this.setupGoalSection();
         this.setupObjectiveModal();
 
         // Listen for Firebase data sync
@@ -738,234 +737,79 @@ class GymTrackerApp {
         }
     }
 
-    // ==========================================
-    // Goal Section
-    // ==========================================
-    setupGoalSection() {
-        // Load and display existing goal
-        this.updateGoalDisplay();
-
-        document.getElementById('save-goal-btn')?.addEventListener('click', () => {
-            const targetBodyFat = parseFloat(document.getElementById('goal-bodyfat').value);
-            const targetDate = document.getElementById('goal-date').value;
-
-            if (targetBodyFat > 0 && targetDate) {
-                localStorage.setItem('gymtracker_bodyfat_goal', JSON.stringify({
-                    targetBodyFat,
-                    targetDate
-                }));
-                this.updateGoalDisplay();
-                alert('Objectif défini !');
-            } else {
-                alert('Veuillez entrer un taux cible et une date.');
-            }
-        });
-    }
-
-    updateGoalDisplay() {
-        const goalData = localStorage.getItem('gymtracker_bodyfat_goal');
-        const displayEl = document.getElementById('goal-display');
-
-        if (!goalData) {
-            displayEl.classList.remove('active');
-            return;
-        }
-
-        const goal = JSON.parse(goalData);
-        document.getElementById('goal-bodyfat').value = goal.targetBodyFat;
-        document.getElementById('goal-date').value = goal.targetDate;
-
-        // Get current body fat
-        const latestData = firebaseSync.getLatestBodyData();
-        let currentBodyFat = null;
-
-        if (latestData && latestData.height && latestData.waist && latestData.neck) {
-            currentBodyFat = 86.010 * Math.log10(latestData.waist - latestData.neck)
-                - 70.041 * Math.log10(latestData.height)
-                + 36.76;
-            currentBodyFat = Math.round(currentBodyFat * 10) / 10;
-        }
-
-        // Calculate days remaining
-        const today = new Date();
-        const target = new Date(goal.targetDate);
-        const daysRemaining = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-
-        // Calculate progress
-        let progressHtml = '';
-        if (currentBodyFat !== null) {
-            const difference = currentBodyFat - goal.targetBodyFat;
-            const percentageToGo = currentBodyFat > goal.targetBodyFat
-                ? Math.abs(difference / currentBodyFat * 100)
-                : 0;
-
-            const progressPercentage = currentBodyFat > goal.targetBodyFat
-                ? Math.max(0, Math.min(100, 100 - percentageToGo))
-                : 100;
-
-            progressHtml = `
-                <div class="goal-info">
-                    <div class="goal-stat">
-                        <div class="goal-stat-label">Actuel</div>
-                        <div class="goal-stat-value">${currentBodyFat}%</div>
-                    </div>
-                    <div class="goal-stat">
-                        <div class="goal-stat-label">Objectif</div>
-                        <div class="goal-stat-value">${goal.targetBodyFat}%</div>
-                    </div>
-                    <div class="goal-stat">
-                        <div class="goal-stat-label">Reste</div>
-                        <div class="goal-stat-value">${difference > 0 ? '-' : '+'}${Math.abs(difference).toFixed(1)}%</div>
-                    </div>
-                    <div class="goal-stat">
-                        <div class="goal-stat-label">Jours restants</div>
-                        <div class="goal-stat-value">${daysRemaining}</div>
-                    </div>
-                </div>
-                <div class="goal-progress-bar">
-                    <div class="goal-progress-fill" style="width: ${progressPercentage}%"></div>
-                </div>
-            `;
-        } else {
-            progressHtml = `
-                <div style="text-align: center; color: var(--text-secondary);">
-                    Entrez vos mesures corporelles pour voir votre progression.
-                </div>
-            `;
-        }
-
-        displayEl.innerHTML = progressHtml;
-        displayEl.classList.add('active');
-    }
 
     // ==========================================
     // Body Tracking Page
     // ==========================================
     setupBodyPage() {
         document.getElementById('save-body-data')?.addEventListener('click', async () => {
-            const heightInput = document.getElementById('body-height').value.replace(',', '.');
-            const waistInput = document.getElementById('body-waist').value.replace(',', '.');
-            const neckInput = document.getElementById('body-neck').value.replace(',', '.');
-            const ageInput = document.getElementById('body-age').value;
+            const weightInput = document.getElementById('body-weight').value.replace(',', '.');
+            const weight = parseFloat(weightInput) || 0;
 
-            const height = parseFloat(heightInput) || 0;
-            const waist = parseFloat(waistInput) || 0;
-            const neck = parseFloat(neckInput) || 0;
-            const age = parseInt(ageInput) || 0;
-
-            // All three measurements required for Navy formula
-            if (height > 0 && waist > 0 && neck > 0) {
-                // Save age to localStorage if provided
-                if (age > 0) {
-                    localStorage.setItem('gymtracker_user_age', age.toString());
-                }
-
-                await firebaseSync.saveBodyData(height, waist, neck);
+            if (weight > 0) {
+                await firebaseSync.saveBodyWeight(weight);
                 this.updateBodyPage();
-                alert('Données enregistrées !');
+                alert('Poids enregistré !');
             } else {
-                alert('Veuillez entrer les 3 mesures (taille, tour de taille, tour de cou).');
+                alert('Veuillez entrer votre poids.');
             }
         });
     }
 
     updateBodyPage() {
-        const latestData = firebaseSync.getLatestBodyData();
+        const bodyData = firebaseSync.getBodyData();
+        const weightEntries = bodyData.filter(e => e.weight);
+        const latest = weightEntries.length > 0 ? weightEntries[weightEntries.length - 1] : null;
 
-        // Load age from localStorage
-        const savedAge = localStorage.getItem('gymtracker_user_age');
-        if (savedAge) {
-            document.getElementById('body-age').value = savedAge;
+        if (latest) {
+            document.getElementById('body-weight').value = latest.weight;
         }
 
-        if (latestData && latestData.height && latestData.waist && latestData.neck) {
-            // Pre-fill inputs from latest data
-            document.getElementById('body-height').value = latestData.height || '';
-            document.getElementById('body-waist').value = latestData.waist || '';
-            document.getElementById('body-neck').value = latestData.neck || '';
+        // Display weight stats
+        const statsEl = document.getElementById('weight-stats');
+        if (statsEl && weightEntries.length > 0) {
+            const weights = weightEntries.map(e => e.weight);
+            const currentWeight = weights[weights.length - 1];
+            const minWeight = Math.min(...weights);
+            const maxWeight = Math.max(...weights);
 
-            // Calculate Navy Body Fat % (Men)
-            // Formula: 86.010 × log10(waist - neck) - 70.041 × log10(height) + 36.76
-            const bodyFat = 86.010 * Math.log10(latestData.waist - latestData.neck)
-                - 70.041 * Math.log10(latestData.height)
-                + 36.76;
+            let deltaHtml = '';
+            if (weightEntries.length >= 2) {
+                const previousWeight = weights[weights.length - 2];
+                const delta = currentWeight - previousWeight;
+                const sign = delta >= 0 ? '+' : '';
+                const color = delta <= 0 ? 'var(--success)' : 'var(--danger)';
+                deltaHtml = `
+                    <div class="stat-card">
+                        <div class="stat-value" style="color: ${color}">${sign}${delta.toFixed(1)}</div>
+                        <div class="stat-label">Variation (kg)</div>
+                    </div>
+                `;
+            }
 
-            const bodyFatRounded = Math.round(bodyFat * 10) / 10;
-
-            // Calculate ±3% range
-            const minBodyFat = Math.round((bodyFat - 3) * 10) / 10;
-            const maxBodyFat = Math.round((bodyFat + 3) * 10) / 10;
-
-            document.getElementById('bodyfat-value').textContent = `${bodyFatRounded}%`;
-            document.getElementById('bodyfat-range').textContent = `±3% [${minBodyFat}% - ${maxBodyFat}%]`;
-
-            // Calculate category based on age
-            const age = parseInt(document.getElementById('body-age').value) || 30;
-            const category = this.getBodyFatCategory(bodyFatRounded, age);
-            const categoryEl = document.getElementById('bodyfat-category');
-            categoryEl.textContent = category.label;
-            categoryEl.style.color = category.color;
-            categoryEl.style.borderColor = category.color;
-
-            // Update gauge needle
-            this.updateBodyFatGaugeNeedle(bodyFatRounded);
-        } else {
-            document.getElementById('bodyfat-value').textContent = '--';
-            document.getElementById('bodyfat-range').textContent = '--';
-            document.getElementById('bodyfat-category').textContent = '--';
-            document.getElementById('bodyfat-category').style.color = '';
-            document.getElementById('bodyfat-category').style.borderColor = '';
+            statsEl.innerHTML = `
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-value">${currentWeight}</div>
+                        <div class="stat-label">Actuel (kg)</div>
+                    </div>
+                    ${deltaHtml}
+                    <div class="stat-card">
+                        <div class="stat-value">${minWeight}</div>
+                        <div class="stat-label">Min (kg)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${maxWeight}</div>
+                        <div class="stat-label">Max (kg)</div>
+                    </div>
+                </div>
+            `;
+        } else if (statsEl) {
+            statsEl.innerHTML = '';
         }
 
         // Update chart
         chartsManager.updateBodyFatChart();
-    }
-
-    updateBodyFatGaugeNeedle(percentage) {
-        const needle = document.getElementById('bodyfat-needle');
-        if (!needle) return;
-
-        // Map percentage (0-50%) to angle (0-180 degrees)
-        // We use 50% as max for better visualization
-        const maxPercentage = 50;
-        const clampedPercentage = Math.min(percentage, maxPercentage);
-        const angle = (clampedPercentage / maxPercentage) * 180;
-
-        // Calculate needle endpoint
-        const centerX = 100;
-        const centerY = 100;
-        const length = 60;
-        const angleRad = (angle - 90) * (Math.PI / 180); // -90 to start from left
-
-        const x2 = centerX + length * Math.cos(angleRad);
-        const y2 = centerY + length * Math.sin(angleRad);
-
-        needle.setAttribute('x2', x2);
-        needle.setAttribute('y2', y2);
-    }
-
-    getBodyFatCategory(bodyFat, age) {
-        // Define thresholds based on age groups (for men)
-        let thresholds;
-        if (age < 40) {
-            thresholds = { essential: 5, athlete: 13, fitness: 17, average: 24 };
-        } else if (age < 60) {
-            thresholds = { essential: 5, athlete: 14, fitness: 19, average: 26 };
-        } else {
-            thresholds = { essential: 5, athlete: 15, fitness: 20, average: 27 };
-        }
-
-        if (bodyFat <= thresholds.essential) {
-            return { label: 'Essentiel', color: '#60a5fa' };
-        } else if (bodyFat <= thresholds.athlete) {
-            return { label: 'Athlète', color: '#10b981' };
-        } else if (bodyFat <= thresholds.fitness) {
-            return { label: 'Fitness', color: '#14b8a6' };
-        } else if (bodyFat <= thresholds.average) {
-            return { label: 'Moyen', color: '#f59e0b' };
-        } else {
-            return { label: 'Obésité', color: '#ef4444' };
-        }
     }
 
     // ==========================================

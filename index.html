@@ -271,24 +271,6 @@
                     <!-- Stats cards will be populated -->
                 </div>
             </section>
-
-            <section class="goal-section">
-                <h2>🎯 Objectif Masse Grasse</h2>
-                <div class="goal-inputs">
-                    <div class="input-group">
-                        <label for="goal-bodyfat">Taux cible (%)</label>
-                        <input type="number" id="goal-bodyfat" placeholder="15" step="0.1" min="0" max="50">
-                    </div>
-                    <div class="input-group">
-                        <label for="goal-date">Date cible</label>
-                        <input type="date" id="goal-date">
-                    </div>
-                    <button class="btn-primary" id="save-goal-btn">Définir l'objectif</button>
-                </div>
-                <div class="goal-display" id="goal-display">
-                    <!-- Goal progress will be displayed here -->
-                </div>
-            </section>
         </main>
 
         <!-- Calendar Page -->
@@ -331,118 +313,24 @@
         <!-- Body Tracking Page -->
         <main id="page-body" class="page">
             <header class="page-header">
-                <h1>⚖️ Suivi Corporel</h1>
+                <h1>⚖️ Suivi du Poids</h1>
             </header>
             <section class="body-input-section">
                 <div class="body-inputs-grid">
                     <div class="input-group">
-                        <label for="body-height">Taille (cm)</label>
-                        <input type="number" id="body-height" placeholder="175" step="0.1" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="body-waist">Tour de taille (cm)</label>
-                        <input type="number" id="body-waist" placeholder="80" step="0.1" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="body-neck">Tour de cou (cm)</label>
-                        <input type="number" id="body-neck" placeholder="38" step="0.1" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="body-age">Âge (ans)</label>
-                        <input type="number" id="body-age" placeholder="30" min="18" max="100">
+                        <label for="body-weight">Poids (kg)</label>
+                        <input type="number" id="body-weight" placeholder="75" step="0.1" min="0">
                     </div>
                 </div>
                 <button class="btn-primary" id="save-body-data">Enregistrer</button>
 
-                <div class="ratios-display">
-                    <div class="bodyfat-card-modern" id="bodyfat-display">
-                        <div class="bodyfat-header">
-                            <h3>Taux de Masse Grasse</h3>
-                            <span class="info-tooltip"
-                                data-tooltip="Formule US Navy (Hommes) - Incertitude ±3%">ⓘ</span>
-                        </div>
-
-                        <div class="bodyfat-gauge-container">
-                            <svg class="bodyfat-gauge" viewBox="0 0 200 120">
-                                <!-- Background arc -->
-                                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.1)"
-                                    stroke-width="20" />
-                                <!-- Colored segments -->
-                                <path d="M 20 100 A 80 80 0 0 1 52 42" fill="none" stroke="#60a5fa" stroke-width="20"
-                                    stroke-linecap="round" />
-                                <path d="M 52 42 A 80 80 0 0 1 100 20" fill="none" stroke="#10b981" stroke-width="20"
-                                    stroke-linecap="round" />
-                                <path d="M 100 20 A 80 80 0 0 1 148 42" fill="none" stroke="#14b8a6" stroke-width="20"
-                                    stroke-linecap="round" />
-                                <path d="M 148 42 A 80 80 0 0 1 172 72" fill="none" stroke="#f59e0b" stroke-width="20"
-                                    stroke-linecap="round" />
-                                <path d="M 172 72 A 80 80 0 0 1 180 100" fill="none" stroke="#ef4444" stroke-width="20"
-                                    stroke-linecap="round" />
-                                <!-- Needle -->
-                                <line id="bodyfat-needle" x1="100" y1="100" x2="100" y2="40" stroke="white"
-                                    stroke-width="3" stroke-linecap="round" />
-                                <circle cx="100" cy="100" r="5" fill="white" />
-                            </svg>
-
-                            <div class="bodyfat-main-value" id="bodyfat-value">--</div>
-                        </div>
-
-                        <div class="bodyfat-info">
-                            <div class="bodyfat-category-badge" id="bodyfat-category">--</div>
-                            <div class="bodyfat-range-text" id="bodyfat-range">--</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bodyfat-reference">
-                    <h3>📊 Tableau de Référence (Hommes)</h3>
-                    <table class="bodyfat-table">
-                        <thead>
-                            <tr>
-                                <th>Catégorie</th>
-                                <th>20-39 ans</th>
-                                <th>40-59 ans</th>
-                                <th>60+ ans</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="essential">
-                                <td>Essentiel</td>
-                                <td>2-5%</td>
-                                <td>2-5%</td>
-                                <td>2-5%</td>
-                            </tr>
-                            <tr class="athlete">
-                                <td>Athlète</td>
-                                <td>6-13%</td>
-                                <td>7-14%</td>
-                                <td>8-15%</td>
-                            </tr>
-                            <tr class="fitness">
-                                <td>Fitness</td>
-                                <td>14-17%</td>
-                                <td>15-19%</td>
-                                <td>16-20%</td>
-                            </tr>
-                            <tr class="average">
-                                <td>Moyen</td>
-                                <td>18-24%</td>
-                                <td>20-26%</td>
-                                <td>21-27%</td>
-                            </tr>
-                            <tr class="obese">
-                                <td>Obésité</td>
-                                <td>25%+</td>
-                                <td>27%+</td>
-                                <td>28%+</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="weight-stats" id="weight-stats">
+                    <!-- Weight stats will be displayed here -->
                 </div>
             </section>
 
             <section class="body-chart-section">
-                <h2>Évolution du taux de masse grasse</h2>
+                <h2>Évolution du poids</h2>
                 <div class="chart-container">
                     <canvas id="bodyfat-chart"></canvas>
                 </div>

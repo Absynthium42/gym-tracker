@@ -234,7 +234,17 @@ class FirebaseSync {
         });
     }
 
-    // Body data (Navy Body Fat Calculator)
+    // Body data - Weight tracking
+    async saveBodyWeight(weight) {
+        const data = this.getData();
+        data.bodyData.push({
+            date: new Date().toISOString(),
+            weight: weight
+        });
+        await this.saveData(data);
+    }
+
+    // Keep old method for backward compatibility but unused
     async saveBodyData(height, waist, neck) {
         const data = this.getData();
         data.bodyData.push({

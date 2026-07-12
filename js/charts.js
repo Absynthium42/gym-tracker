@@ -181,8 +181,8 @@ class ChartsManager {
 
         const bodyData = firebaseSync.getBodyData();
 
-        // Filter entries with all required measurements
-        const validData = bodyData.filter(entry => entry.height && entry.waist && entry.neck);
+        // Filter entries that have a weight field
+        const validData = bodyData.filter(entry => entry.weight);
 
         if (validData.length === 0) {
             this.bodyFatChart.data.labels = [];
@@ -198,16 +198,14 @@ class ChartsManager {
             })
         );
 
-        // Calculate body fat % for each entry using Navy formula
-        const data = validData.map(entry => {
-            const bodyFat = 86.010 * Math.log10(entry.waist - entry.neck)
-                - 70.041 * Math.log10(entry.height)
-                + 36.76;
-            return Math.round(bodyFat * 10) / 10;
-        });
+        const data = validData.map(entry => entry.weight);
 
         this.bodyFatChart.data.labels = labels;
         this.bodyFatChart.data.datasets[0].data = data;
+        this.bodyFatChart.data.datasets[0].label = 'Poids (kg)';
+        this.bodyFatChart.options.scales.y.suggestedMin = undefined;
+        this.bodyFatChart.options.scales.y.suggestedMax = undefined;
+        this.bodyFatChart.options.scales.y.beginAtZero = false;
         this.bodyFatChart.update();
     }
 
