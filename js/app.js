@@ -222,10 +222,10 @@ class GymTrackerApp {
             gifEl.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%231a1a2e" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%236366f1" font-size="40">🏋️</text></svg>';
         };
 
-        // Update PR
-        const pr = firebaseSync.getPersonalRecord(exercise.id, this.currentSeriesIndex);
+        // Update last weight
+        const lastW = firebaseSync.getLastWeight(exercise.id, this.currentSeriesIndex);
         const prValue = document.getElementById('pr-value');
-        prValue.textContent = pr !== null ? pr : '--';
+        prValue.textContent = lastW !== null ? lastW : '--';
 
         // Default weight to 0 (or previous)
         document.getElementById('weight-input').value = 0;
@@ -254,9 +254,9 @@ class GymTrackerApp {
                 document.getElementById(`combo-title-${num}`).textContent = subDisplayName;
                 document.getElementById(`combo-weight-${num}`).value = 0;
 
-                // Show PR for sub-exercise
-                const subPr = firebaseSync.getPersonalRecord(subEx.id, this.currentSeriesIndex);
-                document.getElementById(`combo-pr-${num}`).textContent = `🏆 ${subPr !== null ? subPr : '--'}`;
+                // Show last weight for sub-exercise
+                const subLastW = firebaseSync.getLastWeight(subEx.id, this.currentSeriesIndex);
+                document.getElementById(`combo-pr-${num}`).textContent = `Préc: ${subLastW !== null ? subLastW : '--'}`;
 
                 // Show previous difficulty
                 const prevDiff = firebaseSync.getDifficultyRating(subEx.id, this.currentSeriesIndex);
