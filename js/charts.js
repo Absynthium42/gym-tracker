@@ -23,12 +23,12 @@ class ChartsManager {
                 datasets: [{
                     label: 'Poids (kg)',
                     data: [],
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderColor: '#ffffff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#6366f1',
+                    pointBackgroundColor: '#ffffff',
                     pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
                     pointRadius: 4
@@ -123,12 +123,12 @@ class ChartsManager {
                 datasets: [{
                     label: 'Masse Grasse (%)',
                     data: [],
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderColor: '#ffffff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#10b981',
+                    pointBackgroundColor: '#ffffff',
                     pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
                     pointRadius: 4
