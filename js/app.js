@@ -214,13 +214,7 @@ class GymTrackerApp {
         document.getElementById('total-series').textContent = exercise.series.length;
         document.getElementById('target-reps').textContent = series.reps;
 
-        // Update GIF (placeholder for now)
-        const gifEl = document.getElementById('exercise-gif');
-        gifEl.src = `assets/gifs/${exercise.gif}`;
-        gifEl.alt = displayName;
-        gifEl.onerror = () => {
-            gifEl.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%231a1a2e" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%236366f1" font-size="40">🏋️</text></svg>';
-        };
+
 
         // Update last weight
         const lastW = firebaseSync.getLastWeight(exercise.id, this.currentSeriesIndex);

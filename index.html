@@ -69,26 +69,23 @@
         <!-- Home Page -->
         <main id="page-home" class="page active">
             <header class="page-header">
-                <h1>🏋️ Gym Tracker</h1>
+                <h1 class="app-title">Gym Tracker</h1>
                 <p class="sync-status" id="sync-status">Synchronisation...</p>
             </header>
             <section class="workout-selection">
                 <h2>Choisis ta séance</h2>
                 <div class="workout-cards">
                     <button class="workout-card" data-workout="push">
-                        <div class="card-icon">💪</div>
                         <h3>Push</h3>
                         <p>Épaules & Pectoraux</p>
                         <span class="exercises-count">5 exercices</span>
                     </button>
                     <button class="workout-card" data-workout="legs">
-                        <div class="card-icon">🦵</div>
                         <h3>Legs</h3>
                         <p>Jambes</p>
                         <span class="exercises-count">5 exercices</span>
                     </button>
                     <button class="workout-card" data-workout="pull">
-                        <div class="card-icon">🔙</div>
                         <h3>Pull</h3>
                         <p>Dos & Biceps</p>
                         <span class="exercises-count">5 exercices</span>
@@ -119,10 +116,6 @@
                     Série <span id="current-series">1</span>/<span id="total-series">3</span>
                 </div>
 
-                <div class="exercise-gif-container">
-                    <img id="exercise-gif" src="" alt="Animation exercice" class="exercise-gif">
-                </div>
-
                 <div class="reps-display">
                     <span class="reps-label">Répétitions cibles</span>
                     <span class="reps-value" id="target-reps">4-6</span>
@@ -130,7 +123,6 @@
 
                 <div class="weight-section">
                     <div class="pr-display" id="pr-display">
-                        <span class="pr-icon">💪</span>
                         <span class="pr-label">Préc:</span>
                         <span class="pr-value" id="pr-value">--</span>
                         <span class="pr-unit">kg</span>
@@ -260,7 +252,6 @@
         <!-- Workout Complete Page -->
         <main id="page-complete" class="page">
             <section class="complete-display">
-                <div class="complete-icon">🎉</div>
                 <h2>Séance terminée !</h2>
                 <div class="session-summary" id="session-summary">
                     <!-- Summary will be inserted here -->
@@ -275,7 +266,7 @@
         <!-- Progress Page -->
         <main id="page-progress" class="page">
             <header class="page-header">
-                <h1>📈 Progression</h1>
+                <h1>Progression</h1>
             </header>
             <section class="progress-section">
                 <div class="filter-group">
@@ -296,7 +287,7 @@
         <!-- Calendar Page -->
         <main id="page-calendar" class="page">
             <header class="page-header">
-                <h1>📅 Calendrier</h1>
+                <h1>Calendrier</h1>
             </header>
             <section class="calendar-section">
                 <div class="calendar-nav">
@@ -333,7 +324,7 @@
         <!-- Body Tracking Page -->
         <main id="page-body" class="page">
             <header class="page-header">
-                <h1>⚖️ Suivi du Poids</h1>
+                <h1>Suivi du Poids</h1>
             </header>
             <section class="body-input-section">
                 <div class="body-inputs-grid">
@@ -360,11 +351,11 @@
         <!-- Settings Page -->
         <main id="page-settings" class="page">
             <header class="page-header">
-                <h1>⚙️ Paramètres</h1>
+                <h1>Paramètres</h1>
             </header>
             <section class="settings-section">
                 <div class="setting-item">
-                    <h3>🔗 Synchronisation Firebase</h3>
+                    <h3>Synchronisation Firebase</h3>
                     <p class="setting-desc">Connecte-toi pour synchroniser tes données</p>
                     <div class="firebase-config" id="firebase-config">
                         <input type="text" id="firebase-url" placeholder="URL Firebase Realtime Database">
@@ -374,7 +365,7 @@
                 </div>
 
                 <div class="setting-item">
-                    <h3>🔑 Identifiant Utilisateur</h3>
+                    <h3>Identifiant Utilisateur</h3>
                     <p class="setting-desc">Ton User ID unique pour Firebase. Note-le pour récupérer tes données en cas
                         de problème.</p>
                     <div class="user-id-display">
@@ -385,7 +376,7 @@
                     <details style="margin-top: var(--spacing-md);">
                         <summary
                             style="cursor: pointer; font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-sm);">
-                            🔄 Restaurer un ancien User ID</summary>
+                            Restaurer un ancien User ID</summary>
                         <p class="setting-desc" style="font-size: 0.85rem; margin-bottom: var(--spacing-sm);">Si tu as
                             perdu tes données après avoir vidé le cache, entre ton ancien User ID pour les récupérer
                             depuis Firebase.</p>
@@ -398,7 +389,7 @@
                 </div>
 
                 <div class="setting-item">
-                    <h3>💾 Export / Import</h3>
+                    <h3>Export / Import</h3>
                     <p class="setting-desc">Sauvegarde ou restaure tes données</p>
                     <div class="export-buttons">
                         <button class="btn-secondary" id="export-json">Export JSON</button>
@@ -411,7 +402,7 @@
                 </div>
 
                 <div class="setting-item">
-                    <h3>🗑️ Données</h3>
+                    <h3>Données</h3>
                     <button class="btn-danger" id="clear-data">Effacer toutes les données</button>
                 </div>
             </section>
@@ -434,7 +425,7 @@
         if (restoreId && !sessionStorage.getItem('restored')) {
             localStorage.setItem('gymtracker_user_id', restoreId);
             sessionStorage.setItem('restored', 'true');
-            alert('✅ User ID restauré: ' + restoreId + '\n\nReconnecte-toi à Firebase pour récupérer tes données.');
+            alert('User ID restauré: ' + restoreId + '\n\nReconnecte-toi à Firebase pour récupérer tes données.');
             // Remove parameter and reload
             window.location.href = window.location.pathname;
         }
