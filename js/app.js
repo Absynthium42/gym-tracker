@@ -230,6 +230,22 @@ class GymTrackerApp {
         // Default weight to 0 (or previous)
         document.getElementById('weight-input').value = 0;
 
+        // Update reps done input
+        const lastReps = firebaseSync.getLastRepsCount(exercise.id, this.currentSeriesIndex);
+        document.getElementById('reps-done-input').value = lastReps || 0;
+
+        // Setup reps +/- buttons
+        document.getElementById('reps-minus').onclick = () => {
+            const input = document.getElementById('reps-done-input');
+            const val = parseInt(input.value) || 0;
+            if (val > 0) input.value = val - 1;
+        };
+        document.getElementById('reps-plus').onclick = () => {
+            const input = document.getElementById('reps-done-input');
+            const val = parseInt(input.value) || 0;
+            input.value = val + 1;
+        };
+
         // Check if this is a combo exercise
         const isCombo = exercise.isCombo && exercise.subExercises;
         const comboSection = document.getElementById('combo-section');
@@ -253,6 +269,8 @@ class GymTrackerApp {
                 const subDisplayName = subCustomName || subEx.name;
                 document.getElementById(`combo-title-${num}`).textContent = subDisplayName;
                 document.getElementById(`combo-weight-${num}`).value = 0;
+                const subLastReps = firebaseSync.getLastRepsCount(subEx.id, this.currentSeriesIndex);
+                document.getElementById(`combo-reps-${num}`).value = subLastReps || 0;
 
                 // Show last weight for sub-exercise
                 const subLastW = firebaseSync.getLastWeight(subEx.id, this.currentSeriesIndex);
@@ -260,7 +278,7 @@ class GymTrackerApp {
 
                 // Show previous difficulty
                 const prevDiff = firebaseSync.getDifficultyRating(subEx.id, this.currentSeriesIndex);
-                const labels = { easy: 'F', medium: 'M', hard: 'D' };
+                const labels = { easy: 'F', medium: 'M', hard: 'D', extreme: 'E' };
                 document.getElementById(`combo-diff-prev-${num}`).textContent = prevDiff ? `Préc: ${labels[prevDiff]}` : '';
             });
 
@@ -289,7 +307,7 @@ class GymTrackerApp {
             const previousDifficulty = firebaseSync.getDifficultyRating(exercise.id, this.currentSeriesIndex);
             const diffPreviousEl = document.getElementById('difficulty-previous');
             if (previousDifficulty) {
-                const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
+                const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile', extreme: 'Extrême' };
                 diffPreviousEl.textContent = `Précédent: ${labels[previousDifficulty]}`;
             } else {
                 diffPreviousEl.textContent = '';
@@ -368,12 +386,14 @@ class GymTrackerApp {
                     }
 
                     // Store in session data
+                    const comboReps = parseInt(document.getElementById(`combo-reps-${num}`).value) || 0;
                     this.sessionData.exercises.push({
                         exerciseId: subEx.id,
                         exerciseName: (firebaseSync.getCustomExerciseName(subEx.id) || subEx.name),
                         series: this.currentSeriesIndex + 1,
                         weight: weight,
-                        reps: series.reps
+                        reps: series.reps,
+                        repsDone: comboReps
                     });
                 }
 
@@ -403,12 +423,14 @@ class GymTrackerApp {
                 }
 
                 // Store in session data - will be saved only on workout completion
+                const repsDone = parseInt(document.getElementById('reps-done-input').value) || 0;
                 this.sessionData.exercises.push({
                     exerciseId: exercise.id,
                     exerciseName: (firebaseSync.getCustomExerciseName(exercise.id) || exercise.name),
                     series: this.currentSeriesIndex + 1,
                     weight: weight,
-                    reps: series.reps
+                    reps: series.reps,
+                    repsDone: repsDone
                 });
             }
 
@@ -476,9 +498,14 @@ class GymTrackerApp {
             const prevDiff = firebaseSync.getDifficultyRating(targetExercise.id, this.currentSeriesIndex);
             
             let statsParts = [];
-            if (lastWeight !== null) statsParts.push(`Préc: ${lastWeight} kg`);
+            if (lastWeight !== null) {
+                const lastReps = firebaseSync.getLastRepsCount(targetExercise.id, this.currentSeriesIndex);
+                let weightStr = `Préc: ${lastWeight} kg`;
+                if (lastReps) weightStr += ` × ${lastReps} reps`;
+                statsParts.push(weightStr);
+            }
             if (prevDiff) {
-                const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
+                const labels = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile', extreme: 'Extrême' };
                 statsParts.push(`Diff: ${labels[prevDiff]}`);
             }
             statsText = statsParts.join(' • ');
@@ -531,6 +558,17 @@ class GymTrackerApp {
                     diffData.seriesIndex,
                     diffData.rating
                 );
+            }
+
+            // Save all reps counts from the completed session
+            for (const exerciseData of this.sessionData.exercises) {
+                if (exerciseData.repsDone > 0) {
+                    await firebaseSync.saveRepsCount(
+                        exerciseData.exerciseId,
+                        exerciseData.series - 1,
+                        exerciseData.repsDone
+                    );
+                }
             }
 
             // Save workout to history

@@ -556,6 +556,15 @@ body {
     color: white;
 }
 
+.difficulty-btn.extreme {
+    border-color: #7c3aed;
+}
+
+.difficulty-btn.extreme.selected {
+    background: #7c3aed;
+    color: white;
+}
+
 .difficulty-btn:active {
     transform: scale(0.95);
 }
@@ -710,8 +719,36 @@ body {
     color: white;
 }
 
+.combo-diff-btn.extreme {
+    border-color: #7c3aed;
+}
+
+.combo-diff-btn.extreme.selected {
+    background: #7c3aed;
+    color: white;
+}
+
 .combo-diff-btn:active {
     transform: scale(0.9);
+}
+
+.combo-reps {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.combo-reps-input {
+    width: 60px;
+    text-align: center;
+    padding: var(--spacing-xs);
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .workout-actions {

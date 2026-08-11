@@ -124,7 +124,7 @@
                 </div>
 
                 <div class="reps-display">
-                    <span class="reps-label">Répétitions</span>
+                    <span class="reps-label">Répétitions cibles</span>
                     <span class="reps-value" id="target-reps">4-6</span>
                 </div>
 
@@ -145,6 +145,15 @@
                             <span class="weight-unit">kg</span>
                         </div>
                     </div>
+
+                    <div class="reps-input-group">
+                        <label for="reps-done-input">Répétitions réalisées</label>
+                        <div class="weight-input-wrapper">
+                            <button class="weight-adjust" id="reps-minus">−</button>
+                            <input type="number" id="reps-done-input" value="0" min="0" step="1">
+                            <button class="weight-adjust" id="reps-plus">+</button>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -157,6 +166,7 @@
                     <button class="difficulty-btn easy" data-difficulty="easy">Facile</button>
                     <button class="difficulty-btn medium" data-difficulty="medium">Moyen</button>
                     <button class="difficulty-btn hard" data-difficulty="hard">Difficile</button>
+                    <button class="difficulty-btn extreme" data-difficulty="extreme">Extrême</button>
                 </div>
             </section>
 
@@ -173,6 +183,10 @@
                             </div>
                             <div class="combo-pr" id="combo-pr-1">Préc: --</div>
                         </div>
+                        <div class="combo-reps">
+                            <label>Reps</label>
+                            <input type="number" id="combo-reps-1" value="0" min="0" step="1" class="combo-reps-input">
+                        </div>
                         <div class="combo-difficulty">
                             <label>Difficulté</label>
                             <span class="combo-diff-prev" id="combo-diff-prev-1"></span>
@@ -180,6 +194,7 @@
                                 <button class="combo-diff-btn easy" data-combo="1" data-difficulty="easy">F</button>
                                 <button class="combo-diff-btn medium" data-combo="1" data-difficulty="medium">M</button>
                                 <button class="combo-diff-btn hard" data-combo="1" data-difficulty="hard">D</button>
+                                <button class="combo-diff-btn extreme" data-combo="1" data-difficulty="extreme">E</button>
                             </div>
                         </div>
                     </div>
@@ -195,6 +210,10 @@
                             </div>
                             <div class="combo-pr" id="combo-pr-2">Préc: --</div>
                         </div>
+                        <div class="combo-reps">
+                            <label>Reps</label>
+                            <input type="number" id="combo-reps-2" value="0" min="0" step="1" class="combo-reps-input">
+                        </div>
                         <div class="combo-difficulty">
                             <label>Difficulté</label>
                             <span class="combo-diff-prev" id="combo-diff-prev-2"></span>
@@ -202,6 +221,7 @@
                                 <button class="combo-diff-btn easy" data-combo="2" data-difficulty="easy">F</button>
                                 <button class="combo-diff-btn medium" data-combo="2" data-difficulty="medium">M</button>
                                 <button class="combo-diff-btn hard" data-combo="2" data-difficulty="hard">D</button>
+                                <button class="combo-diff-btn extreme" data-combo="2" data-difficulty="extreme">E</button>
                             </div>
                         </div>
                     </div>

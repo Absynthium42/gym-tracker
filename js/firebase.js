@@ -142,7 +142,8 @@ class FirebaseSync {
             bodyData: [],          // [{ date, weight, height }]
             objectives: [],        // [{ exerciseId, targetWeight, createdAt }]
             customNames: {},       // { exerciseId: "Custom Name" }
-            difficultyRatings: {}, // { exerciseId_seriesIndex: "easy"|"medium"|"hard" }
+            difficultyRatings: {}, // { exerciseId_seriesIndex: "easy"|"medium"|"hard"|"extreme" }
+            repsHistory: {},       // { exerciseId_seriesIndex: [{ date, reps }, ...] }
             lastModified: null
         };
     }
@@ -209,6 +210,33 @@ class FirebaseSync {
         if (history.length === 0) return null;
         // History is stored chronologically, last entry is most recent
         return history[history.length - 1].weight;
+    }
+
+    // Reps tracking
+    async saveRepsCount(exerciseId, seriesIndex, reps) {
+        const data = this.getData();
+        const key = `${exerciseId}_${seriesIndex}`;
+
+        if (!data.repsHistory) data.repsHistory = {};
+        if (!data.repsHistory[key]) {
+            data.repsHistory[key] = [];
+        }
+
+        data.repsHistory[key].push({
+            date: new Date().toISOString(),
+            reps: reps
+        });
+
+        await this.saveData(data);
+    }
+
+    getLastRepsCount(exerciseId, seriesIndex) {
+        const data = this.getData();
+        if (!data.repsHistory) return null;
+        const key = `${exerciseId}_${seriesIndex}`;
+        const history = data.repsHistory[key] || [];
+        if (history.length === 0) return null;
+        return history[history.length - 1].reps;
     }
 
     // Workout history
