@@ -3,36 +3,31 @@
    ========================================== */
 
 :root {
-    /* Colors - Modern Blue Palette */
-    --primary: #3b82f6;
-    /* Blue-500 */
-    --primary-dark: #2563eb;
-    /* Blue-600 */
-    --primary-light: #60a5fa;
-    /* Blue-400 */
-    --secondary: #0ea5e9;
-    /* Sky-500 */
-    --accent: #10b981;
-    /* Emerald-500 for success */
+    /* Colors - Terracotta Palette */
+    --primary: #cc4e46;
+    --primary-dark: #a93c35;
+    --primary-light: #d66c66;
+    --secondary: #2c2c2c;
+    --accent: #cc4e46;
     --success: #10b981;
     --danger: #ef4444;
 
-    /* Backgrounds - Terracotta theme */
+    /* Backgrounds - Minimalist Terracotta Theme */
     --bg-dark: #cc4e46;
-    --bg-card: #1a1d2e;
-    --bg-card-hover: #252942;
-    --bg-input: #151826;
+    --bg-card: #000000;
+    --bg-card-hover: #1a1a1a;
+    --bg-input: #000000;
 
     /* Text */
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #999999;
 
-    /* Gradients - Blue based */
-    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
-    --gradient-push: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-    --gradient-legs: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
-    --gradient-pull: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    /* Gradients - Terracotta based */
+    --gradient-primary: linear-gradient(135deg, #cc4e46 0%, #a93c35 100%);
+    --gradient-push: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+    --gradient-legs: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+    --gradient-pull: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
 
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -193,92 +188,39 @@ body {
 /* ==========================================
    Home Page - Workout Selection
    ========================================== */
-.workout-selection h2 {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    margin-bottom: var(--spacing-lg);
-    text-align: center;
+.workout-selection {
+    margin-top: var(--spacing-xl);
+    display: flex;
+    justify-content: center;
 }
 
-.workout-cards {
+.workout-links {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-xl);
+    width: 100%;
 }
 
-.workout-card {
-    background: var(--bg-card);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
+.workout-link {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: 'Times New Roman', Times, serif;
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: var(--spacing-md) 0;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.workout-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.workout-card[data-workout="push"]::before {
-    background: var(--gradient-push);
-}
-
-.workout-card[data-workout="legs"]::before {
-    background: var(--gradient-legs);
-}
-
-.workout-card[data-workout="pull"]::before {
-    background: var(--gradient-pull);
-}
-
-.workout-card:hover,
-.workout-card:active {
-    background: var(--bg-card-hover);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.workout-card:hover::before,
-.workout-card:active::before {
-    opacity: 1;
-}
-
-.card-icon {
-    font-size: 3rem;
-    margin-bottom: var(--spacing-sm);
-}
-
-.workout-card h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: var(--spacing-xs);
-}
-
-.workout-card p {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-bottom: var(--spacing-sm);
-}
-
-.exercises-count {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    background: var(--bg-input);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-full);
+.workout-link:hover,
+.workout-link:active {
+    transform: scale(1.05);
+    opacity: 0.8;
 }
 
 /* ==========================================

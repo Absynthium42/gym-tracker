@@ -120,7 +120,7 @@ class GymTrackerApp {
     // Workout Selection
     // ==========================================
     setupWorkoutCards() {
-        const cards = document.querySelectorAll('.workout-card');
+        const cards = document.querySelectorAll('.workout-link');
         cards.forEach(card => {
             card.addEventListener('click', () => {
                 const workoutType = card.dataset.workout;
