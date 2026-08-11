@@ -11,7 +11,18 @@
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            alert("JS ERROR: " + message + " at " + source + ":" + lineno + ":" + colno);
+            return false;
+        };
+        window.addEventListener("unhandledrejection", function(event) {
+            alert("PROMISE REJECTION: " + event.reason);
+        });
+    </script>
+
     <link rel="stylesheet" href="css/style.css">
     <!-- Local Libraries for Offline Support -->
     <script src="js/vendor/chart.js"></script>
