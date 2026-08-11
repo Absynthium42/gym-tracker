@@ -107,47 +107,77 @@
                     <span class="reps-value" id="target-reps">4-6</span>
                 </div>
 
-                <div class="weight-section">
-                    <div class="pr-display" id="pr-display">
-                        <span class="pr-label">Préc:</span>
-                        <span class="pr-value" id="pr-value">--</span>
-                        <span class="pr-unit">kg</span>
-                    </div>
+                <div class="neumorphic-panel">
+                    <div class="inputs-grid">
+                        <!-- Poids -->
+                        <div class="input-col">
+                            <div class="col-header">
+                                <h3>POIDS SOULEVÉ</h3>
+                                <div class="pr-display" id="pr-display">
+                                    <span class="pr-label">PRÉCÉDENT :</span>
+                                    <span class="pr-value" id="pr-value">--</span>
+                                    <span class="pr-unit">kg</span>
+                                </div>
+                            </div>
+                            <div class="dial-container">
+                                <button class="dial-btn minus" id="weight-minus">−</button>
+                                <div class="dial-wrapper">
+                                    <input type="number" id="weight-input" value="0" min="0" step="0.5">
+                                    <span class="dial-unit">kg</span>
+                                </div>
+                                <button class="dial-btn plus" id="weight-plus">+</button>
+                            </div>
+                        </div>
 
-                    <div class="weight-input-group">
-                        <label for="weight-input">Poids soulevé</label>
-                        <div class="weight-input-wrapper">
-                            <button class="weight-adjust" id="weight-minus">−</button>
-                            <input type="number" id="weight-input" value="0" min="0" step="0.5">
-                            <button class="weight-adjust" id="weight-plus">+</button>
-                            <span class="weight-unit">kg</span>
+                        <!-- Reps -->
+                        <div class="input-col">
+                            <div class="col-header">
+                                <h3>RÉPÉTITIONS DE LA SÉRIE</h3>
+                                <div class="pr-display" style="opacity: 0; pointer-events: none;">
+                                    <span class="pr-label">-</span>
+                                </div>
+                            </div>
+                            <div class="dial-container">
+                                <button class="dial-btn minus" id="reps-minus">−</button>
+                                <div class="dial-wrapper">
+                                    <input type="number" id="reps-done-input" value="0" min="0" step="1">
+                                    <span class="dial-unit">reps</span>
+                                </div>
+                                <button class="dial-btn plus" id="reps-plus">+</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="reps-input-group">
-                        <label for="reps-done-input">Répétitions réalisées</label>
-                        <div class="weight-input-wrapper">
-                            <button class="weight-adjust" id="reps-minus">−</button>
-                            <input type="number" id="reps-done-input" value="0" min="0" step="1">
-                            <button class="weight-adjust" id="reps-plus">+</button>
-                            <span class="weight-unit">reps</span>
+                    <div class="inputs-footer">
+                        <div class="footer-badge">
+                            Cibles : <span id="target-reps">--</span>
+                        </div>
+                        <div class="footer-badge">
+                            RÉPÉTITIONS RÉALISÉES (TOTAL) : <span id="total-reps-done">--</span>
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <section class="difficulty-section" id="difficulty-section-single">
-                <div class="difficulty-header">
-                    <span class="difficulty-label">Difficulté ressentie</span>
-                    <span class="difficulty-previous" id="difficulty-previous"></span>
+                <div class="neumorphic-panel difficulty-section" id="difficulty-section-single">
+                    <div class="difficulty-header">
+                        <h3>DIFFICULTÉ RESSENTIE</h3>
+                    </div>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn easy" data-difficulty="easy">
+                            <span class="diff-icon">😊</span><br>Facile
+                        </button>
+                        <button class="difficulty-btn medium" data-difficulty="medium">
+                            <span class="diff-icon">😐</span><br>Moyen
+                        </button>
+                        <button class="difficulty-btn hard" data-difficulty="hard">
+                            <span class="diff-icon">😫</span><br>Difficile
+                        </button>
+                        <button class="difficulty-btn extreme" data-difficulty="extreme">
+                            <span class="diff-icon">😈</span><br>Extrême
+                        </button>
+                    </div>
+                    <div class="difficulty-previous" id="difficulty-previous"></div>
                 </div>
-                <div class="difficulty-buttons">
-                    <button class="difficulty-btn easy" data-difficulty="easy">Facile</button>
-                    <button class="difficulty-btn medium" data-difficulty="medium">Moyen</button>
-                    <button class="difficulty-btn hard" data-difficulty="hard">Difficile</button>
-                    <button class="difficulty-btn extreme" data-difficulty="extreme">Extrême</button>
-                </div>
-            </section>
 
             <!-- Combo Exercise Section (hidden by default) -->
             <section class="combo-section" id="combo-section" style="display: none;">

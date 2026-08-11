@@ -47,6 +47,53 @@ class GymTrackerApp {
         firebaseSync.autoConnect().catch(e => console.error('Background sync failed:', e));
 
         console.log('Gym Tracker initialized!');
+
+        // Restore session if one exists
+        this.restoreSessionState();
+    }
+
+    saveSessionState() {
+        if (!this.currentWorkout) return;
+        const state = {
+            workoutType: Object.keys(WORKOUTS).find(k => WORKOUTS[k] === this.currentWorkout),
+            exerciseIndex: this.currentExerciseIndex,
+            seriesIndex: this.currentSeriesIndex,
+            sessionData: this.sessionData,
+            comboDifficulties: this.comboDifficulties,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('gymTrackerSession', JSON.stringify(state));
+    }
+
+    clearSessionState() {
+        localStorage.removeItem('gymTrackerSession');
+    }
+
+    restoreSessionState() {
+        try {
+            const saved = localStorage.getItem('gymTrackerSession');
+            if (saved) {
+                const state = JSON.parse(saved);
+                // Restore if less than 12 hours old
+                if (Date.now() - state.timestamp < 12 * 60 * 60 * 1000 && state.workoutType && WORKOUTS[state.workoutType]) {
+                    this.currentWorkout = WORKOUTS[state.workoutType];
+                    this.currentExerciseIndex = state.exerciseIndex || 0;
+                    this.currentSeriesIndex = state.seriesIndex || 0;
+                    this.sessionData = state.sessionData || { startTime: Date.now(), exercises: [], newPRs: [], difficultyRatings: [] };
+                    this.comboDifficulties = state.comboDifficulties || [null, null];
+
+                    this.navigateTo('workout');
+                    this.showExercise();
+                    return true;
+                } else {
+                    this.clearSessionState();
+                }
+            }
+        } catch (e) {
+            console.error('Failed to restore session', e);
+            this.clearSessionState();
+        }
+        return false;
     }
 
     // ==========================================
@@ -143,6 +190,8 @@ class GymTrackerApp {
             newPRs: [],
             difficultyRatings: []
         };
+
+        this.saveSessionState();
 
         this.showExercise();
         this.navigateTo('workout');
@@ -319,10 +368,39 @@ class GymTrackerApp {
     }
 
     showCancelConfirmation() {
-        if (confirm('Abandonner la séance ?\n\nTa progression actuelle ne sera pas sauvegardée.')) {
-            restTimer.stop();
-            this.navigateTo('home');
+        let modal = document.getElementById('cancel-workout-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'cancel-workout-modal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content neumorphic-modal">
+                    <h3>ABANDONNER LA SÉANCE ?</h3>
+                    <p style="margin-bottom: 20px; font-size: 0.9rem; text-align: center; color: rgba(0,0,0,0.6);">La progression actuelle sera perdue.</p>
+                    <div class="difficulty-buttons" style="background: transparent; box-shadow: none;">
+                        <button class="difficulty-btn" style="opacity: 1; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 10px;" id="cancel-workout-no">
+                            <span style="font-weight: 800; font-size: 0.9rem;">CONTINUER</span>
+                        </button>
+                        <button class="difficulty-btn" style="opacity: 1; background: #e74c3c; color: white; border-radius: 8px; padding: 10px;" id="cancel-workout-yes">
+                            <span style="font-weight: 800; font-size: 0.9rem; color: white;">ABANDONNER</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('app').appendChild(modal);
+
+            document.getElementById('cancel-workout-no').addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+
+            document.getElementById('cancel-workout-yes').addEventListener('click', () => {
+                modal.classList.remove('active');
+                restTimer.stop();
+                this.clearSessionState();
+                this.navigateTo('home');
+            });
         }
+        setTimeout(() => modal.classList.add('active'), 10);
     }
 
     async nextStep() {
@@ -443,6 +521,9 @@ class GymTrackerApp {
                 this.showExercise();
             }
         }
+        
+        // Save state after moving to next series/exercise
+        this.saveSessionState();
     }
 
     // ==========================================
@@ -592,6 +673,7 @@ class GymTrackerApp {
 
             // Finish button
             document.getElementById('finish-workout').onclick = () => {
+                this.clearSessionState();
                 this.navigateTo('home');
             };
 
