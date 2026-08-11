@@ -433,7 +433,7 @@ body {
     height: 48px;
     border-radius: var(--radius-sm);
     border: none;
-    background: var(--bg-input);
+    background: transparent;
     color: var(--text-primary);
     font-size: 1.5rem;
     cursor: pointer;
@@ -445,7 +445,7 @@ body {
     background: var(--primary);
 }
 
-#weight-input {
+#weight-input, #reps-done-input {
     width: 100px;
     height: 48px;
     background: var(--bg-input);
@@ -460,12 +460,14 @@ body {
 }
 
 #weight-input::-webkit-outer-spin-button,
-#weight-input::-webkit-inner-spin-button {
+#weight-input::-webkit-inner-spin-button,
+#reps-done-input::-webkit-outer-spin-button,
+#reps-done-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-#weight-input:focus {
+#weight-input:focus, #reps-done-input:focus {
     outline: none;
     border-color: var(--primary);
 }
@@ -1288,6 +1290,12 @@ body {
 .legend-dot.legs {
     width: 8px;
     height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+}
+
+/* ==========================================
+   Body Tracking Page
    ========================================== */
 .body-input-section {
     background: var(--bg-card);
@@ -1315,7 +1323,7 @@ body {
 
 .input-group input {
     width: 100%;
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     background: var(--bg-input);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-sm);
@@ -1373,361 +1381,8 @@ body {
     margin-bottom: var(--spacing-md);
 }
 
-/* ==========================================
-   Settings Page
-   ========================================== */
-.settings-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg);
-}
-
-.setting-item {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-}
-
-.setting-item h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: var(--spacing-xs);
-}
-
-.setting-desc {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: var(--spacing-md);
-}
-
-.firebase-config {
-    display: flex;
-    gap: var(--spacing-sm);
-}
-
-.firebase-config input {
-    flex: 1;
-    padding: var(--spacing-sm);
-    background: var(--bg-input);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    font-size: 0.875rem;
-}
-
-.export-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-}
-
-.import-btn {
-    cursor: pointer;
-}
-
-.sync-info {
-    margin-top: var(--spacing-sm);
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
-
-/* ==========================================
-   Modal
-   ========================================== */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-lg);
-}
-
-.modal.active {
-    display: flex;
-}
-
-.modal-content {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-xl);
-    width: 100%;
-    max-width: 400px;
-    animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-content h3 {
-    font-size: 1.25rem;
-    margin-bottom: var(--spacing-lg);
-    text-align: center;
-}
-
-.modal-actions {
-    display: flex;
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-lg);
-}
-
-.modal-actions button {
-    flex: 1;
-}
-
-/* ==========================================
-   Responsive Adjustments
-   ========================================== */
-@media (max-width: 360px) {
-    html {
-        font-size: 14px;
-    }
-
-    .workout-card {
-        padding: var(--spacing-md);
-    }
-
-    .card-icon {
-        font-size: 2.5rem;
-    }
-}
-
-/* ==========================================
-   Utility Classes
-   ========================================== */
-.hidden {
-    display: none !important;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.text-success {
-    color: var(--success);
-}
-
-.text-warning {
-    color: var(--accent);
-}
-
-.text-danger {
-    color: var(--danger);
-}
-
-/* ==========================================
-   Body Tracking Enhancements
-   ========================================== */
-.body-input-section {
-    padding: var(--spacing-lg);
-}
-
-.body-inputs-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-}
-
-.body-inputs-grid .input-group {
-    margin-bottom: 0;
-}
-
-.body-inputs-grid .input-group label {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--spacing-xs);
-}
-
-.body-inputs-grid input {
-    width: 100%;
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: var(--bg-input);
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    font-size: 1rem;
-}
-
-.body-inputs-grid input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-.ratios-display {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-sm);
-    margin-top: var(--spacing-lg);
-}
-
-.ratio-card {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-md);
-    text-align: center;
-}
-
-.ratio-card h3 {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: var(--spacing-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-}
-
-.ratio-value {
-    font-size: 1.5rem;
-    font-weight: 800;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.ratio-category {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    margin-top: var(--spacing-xs);
-}
-
-/* Info Tooltip */
-.info-tooltip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    cursor: help;
-    position: relative;
-}
-
-.info-tooltip::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-dark);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-sm);
-    padding: var(--spacing-sm);
-    font-size: 0.65rem;
-    font-weight: 400;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    max-width: 200px;
-    white-space: normal;
-    text-align: left;
-    z-index: 100;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s, visibility 0.2s;
-    pointer-events: none;
-}
-
-.info-tooltip:hover::after,
-.info-tooltip:active::after {
-    opacity: 1;
-    visibility: visible;
-}
-
-.body-chart-section {
-    padding: var(--spacing-lg);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.body-chart-section h2 {
-    font-size: 1rem;
-    margin-bottom: var(--spacing-md);
-}
-
-/* Goal Section */
-.goal-section {
-    padding: var(--spacing-lg);
-    border-top: 1px solid rgba(255, 255, 255, 0.05)
-}
-
-.goal-section h2 {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-md);
-    font-weight: 600
-}
-
-.goal-inputs {
-    display: flex;
-    gap: var(--spacing-md);
-    align-items: flex-end;
-    flex-wrap: wrap
-}
-
-.goal-inputs .input-group {
-    flex: 1;
-    min-width: 120px
-}
-
-.goal-inputs label {
-    display: block;
-    margin-bottom: var(--spacing-xs);
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 500
-}
-
-.goal-inputs input {
-    width: 100%;
-    padding: var(--spacing-sm);
-    background: var(--bg-input);
-    border: 2px solid transparent;
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    font-size: 1rem
-}
-
-.goal-inputs input:focus {
-    outline: none;
-    border-color: var(--accent)
-}
-
-.goal-display {
-    margin-top: var(--spacing-lg);
-    padding: var(--spacing-md);
+.body-chart-section .chart-container {
+    min-height: 250px;
     background: rgba(255, 255, 255, 0.02);
     border-radius: var(--radius-md);
     display: none

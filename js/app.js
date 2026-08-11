@@ -319,35 +319,9 @@ class GymTrackerApp {
     }
 
     showCancelConfirmation() {
-        // Create and show cancel confirmation modal
-        let modal = document.getElementById('cancel-workout-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'cancel-workout-modal';
-            modal.className = 'modal active';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <h3>Abandonner la séance ?</h3>
-                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Ta progression actuelle ne sera pas sauvegardée.</p>
-                    <div class="modal-actions">
-                        <button class="btn-secondary" id="cancel-workout-no">Continuer</button>
-                        <button class="btn-danger" id="cancel-workout-yes">Abandonner</button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('app').appendChild(modal);
-
-            document.getElementById('cancel-workout-no').addEventListener('click', () => {
-                modal.classList.remove('active');
-            });
-
-            document.getElementById('cancel-workout-yes').addEventListener('click', () => {
-                modal.classList.remove('active');
-                restTimer.stop();
-                this.navigateTo('home');
-            });
-        } else {
-            modal.classList.add('active');
+        if (confirm('Abandonner la séance ?\n\nTa progression actuelle ne sera pas sauvegardée.')) {
+            restTimer.stop();
+            this.navigateTo('home');
         }
     }
 
