@@ -52,7 +52,7 @@
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <span>Corps</span>
+                <span>Profil</span>
             </button>
             <button class="nav-btn" data-page="settings">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -98,13 +98,11 @@
 
             <section class="exercise-display">
                 <h2 id="exercise-name">Overhead Press</h2>
+                <div class="exercise-subtitle" style="text-align: center; color: var(--text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.9rem;">
+                    Objectif : <span id="target-reps-header">4-6</span> reps
+                </div>
                 <div class="series-badge">
                     Série <span id="current-series">1</span>/<span id="total-series">3</span>
-                </div>
-
-                <div class="reps-display">
-                    <span class="reps-label">Répétitions cibles</span>
-                    <span class="reps-value" id="target-reps">4-6</span>
                 </div>
 
                 <div class="neumorphic-panel">
@@ -146,16 +144,6 @@
                                 <button class="dial-btn plus" id="reps-plus">+</button>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="inputs-footer">
-                        <div class="footer-badge">
-                            Cibles : <span id="target-reps">--</span>
-                        </div>
-                        <div class="footer-badge">
-                            RÉPÉTITIONS RÉALISÉES (TOTAL) : <span id="total-reps-done">--</span>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="neumorphic-panel difficulty-section" id="difficulty-section-single">
@@ -164,16 +152,16 @@
                     </div>
                     <div class="difficulty-buttons">
                         <button class="difficulty-btn easy" data-difficulty="easy">
-                            <span class="diff-icon">😊</span><br>Facile
+                            Facile
                         </button>
                         <button class="difficulty-btn medium" data-difficulty="medium">
-                            <span class="diff-icon">😐</span><br>Moyen
+                            Moyen
                         </button>
                         <button class="difficulty-btn hard" data-difficulty="hard">
-                            <span class="diff-icon">😫</span><br>Difficile
+                            Difficile
                         </button>
                         <button class="difficulty-btn extreme" data-difficulty="extreme">
-                            <span class="diff-icon">😈</span><br>Extrême
+                            Extrême
                         </button>
                     </div>
                     <div class="difficulty-previous" id="difficulty-previous"></div>
@@ -256,7 +244,10 @@
                         <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
                         <circle class="timer-progress" cx="50" cy="50" r="45" id="timer-circle"></circle>
                     </svg>
-                    <div class="timer-text" id="timer-text">2:00</div>
+                    <div class="timer-text-container" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center;">
+                        <div class="timer-text" id="timer-text">2:00</div>
+                        <div id="timer-seconds" style="font-size:1.5rem; font-weight:700; color:var(--text-secondary); margin-top:-5px;">120</div>
+                    </div>
                 </div>
                 <p class="next-exercise-preview">
                     Prochain: <span id="next-preview">Série 2</span>

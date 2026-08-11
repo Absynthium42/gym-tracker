@@ -261,7 +261,7 @@ class GymTrackerApp {
 
         document.getElementById('current-series').textContent = this.currentSeriesIndex + 1;
         document.getElementById('total-series').textContent = exercise.series.length;
-        document.getElementById('target-reps').textContent = series.reps;
+        document.getElementById('target-reps-header').textContent = series.reps;
 
 
 

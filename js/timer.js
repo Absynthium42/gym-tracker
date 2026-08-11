@@ -11,6 +11,7 @@ class RestTimer {
         this.onComplete = null;
         this.timerCircle = document.getElementById('timer-circle');
         this.timerText = document.getElementById('timer-text');
+        this.timerSeconds = document.getElementById('timer-seconds');
     }
 
     start(seconds, callbacks = {}) {
@@ -59,6 +60,10 @@ class RestTimer {
 
         if (this.timerText) {
             this.timerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        if (this.timerSeconds) {
+            this.timerSeconds.textContent = this.remaining;
         }
 
         if (this.timerCircle) {

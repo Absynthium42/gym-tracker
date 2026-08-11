@@ -373,7 +373,27 @@ body {
     border: var(--glass-border);
     box-shadow: var(--glass-shadow);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
+}
+
+.neumorphic-panel {
+    background: var(--bg-dark);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(255,255,255,0.05);
+}
+
+.inputs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+}
+
+.input-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .pr-display {
@@ -408,7 +428,7 @@ body {
 
 .weight-input-group,
 .reps-input-group {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
 }
 
 .weight-input-group label,
@@ -438,7 +458,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 16px;
+    margin: var(--spacing-sm) 0;
 }
 
 .dial-btn {
@@ -464,8 +485,8 @@ body {
 
 .dial-wrapper {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
     background: linear-gradient(145deg, #b56857, #d77b68);
     box-shadow: inset 5px 5px 10px #ab6252, inset -5px -5px 10px #e7846f;
@@ -479,11 +500,11 @@ body {
 .dial-wrapper input {
     background: transparent;
     border: none;
-    width: 100%;
-    text-align: center;
-    font-size: 1.8rem;
+    color: #fff;
+    font-size: 1.25rem;
     font-weight: 800;
-    color: #ffffff;
+    text-align: center;
+    width: 100%;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     padding: 0;
     margin-top: 8px;
