@@ -4,25 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="theme-color" content="#C97361">
     <meta name="description" content="Application de suivi de musculation">
     <title>Gym Tracker</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <script>
-        window.onerror = function(message, source, lineno, colno, error) {
-            alert("JS ERROR: " + message + " at " + source + ":" + lineno + ":" + colno);
-            return false;
-        };
-        window.addEventListener("unhandledrejection", function(event) {
-            alert("PROMISE REJECTION: " + event.reason);
-        });
-    </script>
-
     <link rel="stylesheet" href="css/style.css">
     <!-- Local Libraries for Offline Support -->
     <script src="js/vendor/chart.js"></script>
@@ -129,12 +118,10 @@
                                 </div>
                             </div>
                             <div class="dial-container">
-                                <button class="dial-btn minus" id="weight-minus">−</button>
                                 <div class="dial-wrapper">
                                     <input type="number" id="weight-input" value="0" min="0" step="0.5">
                                     <span class="dial-unit">kg</span>
                                 </div>
-                                <button class="dial-btn plus" id="weight-plus">+</button>
                             </div>
                         </div>
 
@@ -147,12 +134,10 @@
                                 </div>
                             </div>
                             <div class="dial-container">
-                                <button class="dial-btn minus" id="reps-minus">−</button>
                                 <div class="dial-wrapper">
                                     <input type="number" id="reps-done-input" value="0" min="0" step="1">
                                     <span class="dial-unit">reps</span>
                                 </div>
-                                <button class="dial-btn plus" id="reps-plus">+</button>
                             </div>
                         </div>
                 </div>

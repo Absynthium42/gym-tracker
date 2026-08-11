@@ -211,18 +211,6 @@ class GymTrackerApp {
             this.nextStep();
         });
 
-        // Weight adjustment buttons
-        document.getElementById('weight-minus')?.addEventListener('click', () => {
-            const input = document.getElementById('weight-input');
-            const current = parseFloat(input.value) || 0;
-            input.value = Math.max(0, current - 2.5);
-        });
-
-        document.getElementById('weight-plus')?.addEventListener('click', () => {
-            const input = document.getElementById('weight-input');
-            const current = parseFloat(input.value) || 0;
-            input.value = current + 2.5;
-        });
     }
 
     showExercise() {
@@ -277,17 +265,6 @@ class GymTrackerApp {
         const lastReps = firebaseSync.getLastRepsCount(exercise.id, this.currentSeriesIndex);
         document.getElementById('reps-done-input').value = lastReps || 0;
 
-        // Setup reps +/- buttons
-        document.getElementById('reps-minus').onclick = () => {
-            const input = document.getElementById('reps-done-input');
-            const val = parseInt(input.value) || 0;
-            if (val > 0) input.value = val - 1;
-        };
-        document.getElementById('reps-plus').onclick = () => {
-            const input = document.getElementById('reps-done-input');
-            const val = parseInt(input.value) || 0;
-            input.value = val + 1;
-        };
 
         // Check if this is a combo exercise
         const isCombo = exercise.isCombo && exercise.subExercises;
