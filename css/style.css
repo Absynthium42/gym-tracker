@@ -64,6 +64,7 @@
 html, body {
     background-color: var(--bg-dark);
     font-size: 16px;
+    overscroll-behavior: none;
 }
 
 body {
