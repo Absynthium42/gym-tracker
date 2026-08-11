@@ -292,7 +292,7 @@ class GymTrackerApp {
         // Check if this is a combo exercise
         const isCombo = exercise.isCombo && exercise.subExercises;
         const comboSection = document.getElementById('combo-section');
-        const singleWeightSection = document.querySelector('#workout-page .neumorphic-panel');
+        const singleWeightSection = document.querySelector('#page-workout .neumorphic-panel');
         const singleDiffSection = document.getElementById('difficulty-section-single');
 
         if (isCombo) {
